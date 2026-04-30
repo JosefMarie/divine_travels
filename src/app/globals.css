@@ -1,26 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #1B4D3E;
+  --secondary: #D2C5AC;
+  --tertiary: #B3305B;
+  --neutral: #F4F1EA;
+  
+  --background: var(--neutral);
+  --foreground: var(--primary);
+  
+  --font-serif: "Noto Serif", serif;
+  --font-technical: "Space Grotesk", sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-neutral: var(--neutral);
+  
+  --font-serif: var(--font-serif);
+  --font-technical: var(--font-technical);
+  
+  --animate-scanline: scan 2s linear infinite;
+  
+  @keyframes scan {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-serif);
+  overflow-x: hidden;
+}
+
+.technical-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(27, 77, 62, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 77, 62, 0.05) 1px, transparent 1px);
+}
+
+.glass-panel {
+  background: rgba(244, 241, 234, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(27, 77, 62, 0.1);
+}
+
+.corner-reticle {
+  position: relative;
+}
+
+.corner-reticle::before,
+.corner-reticle::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--primary);
+  opacity: 0.5;
+}
+
+.corner-reticle-tl::before { top: 0; left: 0; border-top: 1px solid; border-left: 1px solid; }
+.corner-reticle-br::after { bottom: 0; right: 0; border-bottom: 1px solid; border-right: 1px solid; }
+
+/* The Technical Float Card Interaction */
+.technical-card {
+  position: relative;
+  transition: all 0.5s ease-out;
+  box-shadow: 0 8px 30px rgba(27, 77, 62, 0.04);
+}
+
+.technical-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(27, 77, 62, 0.08);
+}
+
+.technical-card::before,
+.technical-card::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--tertiary);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.technical-card::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+  transform: translate(-16px, -16px);
+}
+
+.technical-card::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  transform: translate(16px, 16px);
+}
+
+.technical-card:hover::before,
+.technical-card:hover::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
