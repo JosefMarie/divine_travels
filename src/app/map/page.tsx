@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { TechnicalOverlay } from "@/components/ui/TechnicalOverlay";
 import MapEngine from "@/components/map/MapEngine";
-import { Activity, Globe, Compass, Target, ArrowRight, Grid3X3, PlaneTakeoff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Grid3X3, PlaneTakeoff } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { subscribeToPosts } from "@/lib/db/posts";
 import { Post } from "@/types";
@@ -55,7 +55,7 @@ export default function GlobalEngine() {
   const activeCoords = activePost ? parseCoords(activePost.coordinates) : null;
 
   return (
-    <main className="relative h-screen bg-neutral overflow-hidden flex flex-col md:flex-row">
+    <main className="relative h-screen bg-transparent overflow-hidden flex flex-col md:flex-row">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
 
@@ -89,7 +89,7 @@ export default function GlobalEngine() {
                       {String(idx + 1).padStart(2, '0')} / {post.category?.toUpperCase() || 'UNCATEGORIZED'}
                     </span>
                     <div className="flex justify-between items-baseline mt-1">
-                      <span className={`font-serif text-lg truncate pr-2 ${activeSectorId === post.id ? 'text-primary' : 'text-primary/60'}`}>
+                      <span className={`font-heading text-lg truncate pr-2 ${activeSectorId === post.id ? 'text-primary' : 'text-primary/60'}`}>
                         {post.title}
                       </span>
                       <span className="font-technical text-[9px] text-primary/40 font-bold whitespace-nowrap">
@@ -125,7 +125,7 @@ export default function GlobalEngine() {
       </aside>
 
       {/* Main Map Engine */}
-      <div className="flex-1 relative bg-neutral flex items-center justify-center">
+      <div className="flex-1 relative bg-transparent flex items-center justify-center">
         <MapEngine focusLocation={focusLocation} />
         
         {/* Engagement Overlays */}
@@ -145,7 +145,7 @@ export default function GlobalEngine() {
                 <span className="font-technical text-[8px] text-primary/40 block tracking-[0.2em] font-bold uppercase">Global Coverage</span>
                 <div className="flex items-baseline gap-2">
                   <span className="font-technical text-4xl text-primary font-bold tracking-tighter">64</span>
-                  <span className="font-serif text-lg text-primary/60 italic">Countries</span>
+                  <span className="font-body text-lg text-primary/60 italic">Countries</span>
                 </div>
               </div>
               
@@ -183,7 +183,7 @@ export default function GlobalEngine() {
           >
             <div className="relative z-10">
               <span className="font-technical text-[8px] text-tertiary block uppercase font-bold tracking-widest mb-1">Action Required</span>
-              <span className="font-serif text-lg italic">Drill-down to Iceland</span>
+              <span className="font-body text-lg italic">Drill-down to Iceland</span>
             </div>
             <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
             

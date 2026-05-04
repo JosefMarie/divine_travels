@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowUpRight, Clock, Tag, MessageSquare, Loader2 } from "lucide-react";
+import { ArrowUpRight, Clock, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { subscribeToPosts } from "@/lib/db/posts";
@@ -38,7 +38,7 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-neutral">
+    <main className="relative min-h-screen bg-transparent">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
 

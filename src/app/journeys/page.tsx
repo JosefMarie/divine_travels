@@ -6,7 +6,6 @@ import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { Search, ArrowRight } from "lucide-react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import Image from "next/image";
-import Link from "next/link";
 import { subscribeToDestinations } from "@/lib/db/destinations";
 import { Destination } from "@/types";
 
@@ -44,7 +43,7 @@ export default function JourneysPage() {
   });
 
   return (
-    <main className="relative min-h-screen pt-32 px-6 md:px-12 bg-neutral">
+    <main className="relative min-h-screen pt-32 px-6 md:px-12 bg-transparent">
       <Navbar />
       <TechnicalOverlay className="opacity-5" />
 
@@ -53,7 +52,7 @@ export default function JourneysPage() {
           <p className="font-technical text-[10px] text-primary/50 mb-4 tracking-[0.4em] font-bold uppercase">
             Archive Hub
           </p>
-          <h1 className="font-serif text-6xl md:text-8xl text-primary uppercase mb-12">
+          <h1 className="font-heading text-6xl md:text-8xl text-primary uppercase mb-12">
             Journeys
           </h1>
 
@@ -126,7 +125,7 @@ export default function JourneysPage() {
                     {story.location}
                   </span>
                 </div>
-                <h3 className="font-serif text-3xl text-primary group-hover:text-tertiary transition-colors">
+                <h3 className="font-heading text-3xl text-primary group-hover:text-tertiary transition-colors">
                   {story.title}
                 </h3>
                 <MagneticButton className="mt-8 group flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">

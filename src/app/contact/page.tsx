@@ -36,7 +36,7 @@ export default function ContactPage() {
   const labelCls = "block font-technical text-[10px] uppercase font-bold text-primary/40 mb-2 tracking-widest";
 
   return (
-    <main className="relative min-h-screen bg-neutral pt-32 pb-24 overflow-hidden">
+    <main className="relative min-h-screen bg-transparent pt-32 pb-24 overflow-hidden">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
       <Scanline />

@@ -27,6 +27,8 @@ const voyage = localFont({
   variable: "--font-accent",
 });
 
+import { DynamicSpaceBackground } from "@/components/ui/DynamicSpaceBackground";
+
 export const metadata: Metadata = {
   title: "Divine's Destinations | Technical Luxury Travel",
   description: "A technical exploration of the world's most curated landscapes. Documenting the intersection of elite luxury and geographic precision.",
@@ -38,11 +40,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${phitagate.variable} ${gebuk.variable} ${bingo.variable} ${zighead.variable} ${voyage.variable} antialiased`}>
-      <body className="min-h-screen bg-neutral selection:bg-primary/20 selection:text-primary font-body">
-        {children}
+    <html lang="en" suppressHydrationWarning className={`${phitagate.variable} ${gebuk.variable} ${bingo.variable} ${zighead.variable} ${voyage.variable} antialiased bg-neutral`}>
+      <body className="min-h-screen bg-transparent selection:bg-primary/20 selection:text-primary font-body relative">
+        <DynamicSpaceBackground />
+        <div className="relative z-10">
+          {children}
+        </div>
       </body>
     </html>
   );
 }
-

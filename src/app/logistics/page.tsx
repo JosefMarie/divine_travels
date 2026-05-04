@@ -1,31 +1,57 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+import { TechnicalOverlay } from "@/components/ui/TechnicalOverlay";
 import { 
   Wifi, 
   Map, 
   PlaneTakeoff, 
   Terminal, 
-  Clock, 
   Globe, 
   ShieldCheck, 
   Cpu, 
-  ArrowRight,
-  Zap,
-  Layout
+  Zap
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { subscribeToSectorContent } from "@/lib/db/content";
+import { LogisticsContent } from "@/types";
+import { Loader2 } from "lucide-react";
 
 export default function LogisticsPage() {
+  const [content, setContent] = useState<LogisticsContent | null>(null);
+
+  useEffect(() => {
+    const unsub = subscribeToSectorContent<LogisticsContent>('logistics', setContent);
+    return () => unsub();
+  }, []);
+
+  if (!content) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="animate-spin text-tertiary" size={40} />
+    </div>
+  );
+
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Map': return Map;
+      case 'PlaneTakeoff': return PlaneTakeoff;
+      case 'Terminal': return Terminal;
+      case 'Wifi': return Wifi;
+      case 'Globe': return Globe;
+      case 'ShieldCheck': return ShieldCheck;
+      case 'Cpu': return Cpu;
+      case 'Zap': return Zap;
+      default: return Terminal;
+    }
+  };
+
   return (
-    <main className="relative min-h-screen bg-neutral">
+    <main className="relative min-h-screen bg-transparent">
       <Navbar />
-      <TechnicalOverlay className="opacity-10" />
+      <TechnicalOverlay className="opacity-[0.03]" />
 
       {/* Hero Section */}
       <header className="relative h-screen flex items-center px-6 md:px-12 lg:px-24 overflow-hidden">
@@ -53,9 +79,9 @@ export default function LogisticsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="font-heading text-6xl md:text-8xl text-primary mb-12"
+            className="font-heading text-6xl md:text-8xl text-primary leading-none mb-12"
           >
-            Logistics <br /> Protocol.
+            {content.heroTitle}
           </motion.h1>
           
           <motion.p 
@@ -64,16 +90,16 @@ export default function LogisticsPage() {
             transition={{ delay: 0.4 }}
             className="font-body text-xl text-primary/60 max-w-xl italic leading-relaxed mb-16"
           >
-            Distilling the chaos of global movement into a curated series of high-definition, high-productivity moments. Precision-engineered for the modern nomad.
+            {content.heroDescription}
           </motion.p>
 
           <div className="grid grid-cols-2 gap-12 max-w-md">
             <div>
-              <p className="font-technical text-[40px] font-bold text-tertiary leading-none">0.02s</p>
+              <p className="font-technical text-[40px] font-bold text-tertiary leading-none">{content.latency}</p>
               <p className="font-technical text-[10px] text-primary/40 uppercase tracking-widest mt-2 font-bold">Latency Rate</p>
             </div>
             <div>
-              <p className="font-technical text-[40px] font-bold text-tertiary leading-none">99.9%</p>
+              <p className="font-technical text-[40px] font-bold text-tertiary leading-none">{content.uptime}</p>
               <p className="font-technical text-[10px] text-primary/40 uppercase tracking-widest mt-2 font-bold">Uptime Protocol</p>
             </div>
           </div>
@@ -100,35 +126,34 @@ export default function LogisticsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { title: "Planning Tools", desc: "Dynamic itinerary generation using real-time atmospheric data.", icon: Map, stat: "1.2s Sync" },
-            { title: "Flight Hacks", desc: "Bypass standard routing protocols for optimal transit efficiency.", icon: PlaneTakeoff, stat: "142+ Nodes" },
-            { title: "Booking Opt", desc: "Algorithmic selection of high-fidelity accommodations.", icon: Terminal, stat: "< 0.001% Error" },
-          ].map((item, i) => (
-            <div key={i} className="group relative technical-card p-10 border border-primary/5 overflow-hidden cursor-pointer transition-all duration-500 hover:border-tertiary/20">
-               <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 group-hover:scale-110 group-hover:rotate-6">
-                 <item.icon size={120} className="group-hover:text-tertiary transition-colors duration-700" />
-               </div>
-               <div className="relative z-10">
-                 <div className="mb-12 flex justify-between items-start">
-                    <motion.div 
-                      whileHover={{ rotate: 360 }} 
-                      transition={{ duration: 0.8, ease: "anticipate" }}
-                      className="text-primary group-hover:text-tertiary transition-colors duration-500"
-                    >
-                      <item.icon size={32} />
-                    </motion.div>
-                    <span className="font-technical text-[8px] bg-primary text-neutral px-2 py-0.5 font-bold uppercase group-hover:bg-tertiary transition-colors duration-500">Active</span>
+          {content.resources.map((item, i) => {
+            const Icon = getIcon(item.icon);
+            return (
+              <div key={i} className="group relative technical-card p-10 border border-primary/5 overflow-hidden cursor-pointer transition-all duration-500 hover:border-tertiary/20">
+                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 group-hover:scale-110 group-hover:rotate-6">
+                   <Icon size={120} className="group-hover:text-tertiary transition-colors duration-700" />
                  </div>
-                 <h3 className="font-heading text-primary mb-4 group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
-                 <p className="font-serif text-sm text-primary/60 italic mb-12 group-hover:text-primary transition-colors duration-500">{item.desc}</p>
-                 <div className="pt-6 border-t border-primary/5 flex justify-between items-center font-technical text-[9px] font-bold uppercase">
-                    <span className="text-primary/30 group-hover:text-primary transition-colors duration-500">Metric</span>
-                    <span className="text-tertiary group-hover:scale-110 transition-transform duration-500">{item.stat}</span>
+                 <div className="relative z-10">
+                   <div className="mb-12 flex justify-between items-start">
+                      <motion.div 
+                        whileHover={{ rotate: 360 }} 
+                        transition={{ duration: 0.8, ease: "anticipate" }}
+                        className="text-primary group-hover:text-tertiary transition-colors duration-500"
+                      >
+                        <Icon size={32} />
+                      </motion.div>
+                      <span className="font-technical text-[8px] bg-primary text-neutral px-2 py-0.5 font-bold uppercase group-hover:bg-tertiary transition-colors duration-500">Active</span>
+                   </div>
+                   <h3 className="font-heading text-primary mb-4 group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
+                   <p className="font-body text-sm text-primary/60 italic mb-12 group-hover:text-primary transition-colors duration-500">{item.desc}</p>
+                   <div className="pt-6 border-t border-primary/5 flex justify-between items-center font-technical text-[9px] font-bold uppercase">
+                      <span className="text-primary/30 group-hover:text-primary transition-colors duration-500">Metric</span>
+                      <span className="text-tertiary group-hover:scale-110 transition-transform duration-500">{item.stat}</span>
+                   </div>
                  </div>
-               </div>
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -147,11 +172,11 @@ export default function LogisticsPage() {
                 <div className="space-y-4">
                    <div className="p-6 border border-neutral/10 flex items-center gap-4 bg-neutral/[0.02] backdrop-blur-sm">
                       <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-                      <span className="font-technical text-[10px] text-neutral uppercase tracking-widest font-bold">Global Uplink: Engaged</span>
+                      <span className="font-technical text-[10px] text-neutral uppercase tracking-widest font-bold">Global Uplink: {content.infrastructure.uplink}</span>
                    </div>
                    <div className="p-6 border border-neutral/5 flex items-center gap-4 opacity-30">
                       <div className="w-2 h-2 rounded-full bg-neutral" />
-                      <span className="font-technical text-[10px] text-neutral uppercase tracking-widest font-bold">Local Grid: Bypassed</span>
+                      <span className="font-technical text-[10px] text-neutral uppercase tracking-widest font-bold">Local Grid: {content.infrastructure.localGrid}</span>
                    </div>
                 </div>
              </div>
@@ -161,7 +186,7 @@ export default function LogisticsPage() {
              <div className="p-10 border border-neutral/10 bg-neutral/[0.02] flex flex-col justify-between group">
                 <div>
                    <h4 className="font-heading mb-4">Connectivity Hardware</h4>
-                   <p className="font-serif text-sm text-neutral/40 italic">Satellite arrays and hardware VPN protocols for the elite traveler.</p>
+                   <p className="font-body text-sm text-neutral/40 italic">Satellite arrays and hardware VPN protocols for the elite traveler.</p>
                 </div>
                 <div className="mt-12 h-64 relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 border border-neutral/5">
                    <Image 
@@ -176,7 +201,7 @@ export default function LogisticsPage() {
              <div className="p-10 border border-neutral/10 bg-neutral/[0.02] flex flex-col justify-between">
                 <div>
                    <h4 className="font-heading mb-4">Work Protocols</h4>
-                   <p className="font-serif text-sm text-neutral/40 italic">Standard operating procedures for asynchronous deep-work sessions.</p>
+                   <p className="font-body text-sm text-neutral/40 italic">Standard operating procedures for asynchronous deep-work sessions.</p>
                 </div>
                 <div className="mt-12 space-y-6">
                    {[
@@ -196,15 +221,10 @@ export default function LogisticsPage() {
                 <div className="flex flex-col md:flex-row gap-12 items-center">
                    <div className="flex-1">
                       <h4 className="font-heading mb-4">Timezone Management</h4>
-                      <p className="font-serif text-sm text-neutral/40 italic">Circadian-aligned scheduling algorithms that synchronize with global market hours.</p>
+                      <p className="font-body text-sm text-neutral/40 italic">Circadian-aligned scheduling algorithms that synchronize with global market hours.</p>
                    </div>
                    <div className="grid grid-cols-2 gap-4 w-full md:w-fit">
-                      {[
-                        { city: "New York", utc: "UTC-5", active: true },
-                        { city: "London", utc: "UTC+1", active: false },
-                        { city: "Tokyo", utc: "UTC+9", active: false },
-                        { city: "Singapore", utc: "UTC+8", active: false },
-                      ].map((t, i) => (
+                      {content.infrastructure.timezones.map((t, i) => (
                         <div key={i} className={`p-6 border text-center ${t.active ? 'border-tertiary bg-tertiary/[0.05]' : 'border-neutral/10'}`}>
                            <p className={`font-technical text-2xl font-bold ${t.active ? 'text-tertiary' : 'text-neutral'}`}>{t.utc}</p>
                            <p className="font-technical text-[8px] uppercase tracking-widest font-bold text-neutral/40 mt-1">{t.city}</p>

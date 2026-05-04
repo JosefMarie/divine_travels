@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
+import { TechnicalOverlay } from "@/components/ui/TechnicalOverlay";
 import { ShieldCheck, Lock, Database, EyeOff, Network } from "lucide-react";
 
 export default function PrivacyPage() {
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <main className="relative min-h-screen bg-neutral selection:bg-tertiary selection:text-neutral">
+    <main className="relative min-h-screen bg-transparent selection:bg-tertiary selection:text-neutral">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
 

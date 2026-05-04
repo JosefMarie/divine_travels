@@ -6,7 +6,8 @@
   --tertiary: #B3305B;
   --neutral: #F4F1EA;
   
-  --background: var(--neutral);
+  /* Space-optimized background base */
+  --background: #F0EDE5; 
   --foreground: var(--primary);
 }
 

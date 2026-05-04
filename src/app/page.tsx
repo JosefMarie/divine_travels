@@ -9,18 +9,47 @@ import { ArrowRight, MoveUpRight, MapPin, Home as HomeIcon, Sparkles, Compass } 
 import Link from "next/link";
 import Image from "next/image";
 import { subscribeToPosts } from "@/lib/db/posts";
-import { Post } from "@/types";
+import { subscribeToSectorContent } from "@/lib/db/content";
+import { Post, HomeContent } from "@/types";
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [content, setContent] = useState<HomeContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = subscribeToPosts((data) => {
+    // Attempt Geolocation Scan
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        const latDir = latitude >= 0 ? 'N' : 'S';
+        const lonDir = longitude >= 0 ? 'E' : 'W';
+        const formatted = `${Math.abs(latitude).toFixed(4)}° ${latDir}, ${Math.abs(longitude).toFixed(4)}° ${lonDir}`;
+        setUserLocation(formatted);
+      });
+    }
+    
+    const unsubPosts = subscribeToPosts((data) => {
       setPosts(data.slice(0, 3)); // Top 3 latest
       setLoading(false);
     });
-    return () => unsub();
+    
+    // Initial direct fetch for reliability
+    import('@/lib/db/content').then(m => {
+      m.getSectorContent<HomeContent>('home').then(data => {
+        if (data) setContent(data);
+      });
+    });
+
+    const unsubContent = subscribeToSectorContent<HomeContent>('home', (data) => {
+      setContent(data);
+    });
+
+    return () => {
+      unsubPosts();
+      unsubContent();
+    };
   }, []);
 
   const getCategoryIcon = (cat: string) => {
@@ -41,18 +70,26 @@ export default function Home() {
         
         <div className="max-w-7xl mx-auto w-full grid grid-cols-12 gap-8 items-center z-10">
           <div className="col-span-12 lg:col-span-7">
-            <div className="inline-block px-4 py-1 border border-primary/30 mb-8 bg-neutral/50 backdrop-blur-sm">
-              <p className="font-technical text-[10px] text-primary uppercase tracking-[0.2em] font-bold">
-                Elite Travel Documentation
-              </p>
+            <div className="inline-block px-4 py-1 border border-primary/30 mb-8 bg-neutral/50 backdrop-blur-sm relative overflow-hidden group">
+              <div className="flex items-center gap-2">
+                <div className={`w-1 h-1 rounded-full ${userLocation ? 'bg-tertiary' : 'bg-primary/30 animate-pulse'}`} />
+                <p className="font-technical text-[10px] text-primary uppercase tracking-[0.2em] font-bold">
+                  {userLocation ? `USER_LOC // ${userLocation}` : (content?.label || "Elite Travel Documentation")}
+                </p>
+              </div>
+              {!userLocation && <div className="absolute inset-0 bg-primary/5 -translate-x-full animate-[scan_2s_linear_infinite]" />}
             </div>
             
             <h1 className="font-brand text-6xl md:text-8xl text-primary mb-6 leading-[0.9] tracking-tight">
-              Divine&apos;s <br /> Destinations
+              {content?.heroTitle.split(' ').map((word, i) => (
+                <React.Fragment key={i}>
+                  {word} {i === 0 && <br />}
+                </React.Fragment>
+              )) || "Divine's Destinations"}
             </h1>
             
             <p className="font-body text-xl md:text-2xl text-primary/70 mb-12 max-w-xl italic">
-              Sharing travel with others through a lens of technical precision and narrative luxury.
+              {content?.heroDescription || "Sharing travel with others through a lens of technical precision and narrative luxury."}
             </p>
             
             <div className="flex flex-wrap gap-8">
@@ -88,11 +125,11 @@ export default function Home() {
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="font-technical text-[8px] uppercase opacity-50 mb-1 tracking-tighter">Current Coordinates</p>
-                    <p className="font-technical text-[10px] font-bold">08° 30&apos; 00&quot; S, 115° 15&apos; 00&quot; E</p>
+                    <p className="font-technical text-[10px] font-bold">{content?.coordinates || "08° 30' 00\" S, 115° 15' 00\" E"}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-technical text-[8px] uppercase opacity-50 mb-1 tracking-tighter">Altitude</p>
-                    <p className="font-technical text-2xl leading-none text-tertiary">12.4m</p>
+                    <p className="font-technical text-2xl leading-none text-tertiary">{content?.altitude || "12.4m"}</p>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,6 @@ import {
   query,
   orderBy,
   where,
-  serverTimestamp,
   Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../firebase';

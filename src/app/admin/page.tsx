@@ -19,6 +19,22 @@ import {
   updateProfile 
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { 
+  subscribeToAllSectors, 
+  saveSectorDraft, 
+  publishSectorContent,
+  getSectorDraft
+} from "@/lib/db/content";
+import { 
+  HomeContent, 
+  AboutContent, 
+  GearContent, 
+  GastronomyContent, 
+  LogisticsContent,
+  SectorId,
+  SiteSectorDoc,
+  SectorContentMap
+} from "@/types";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 import { 
@@ -280,7 +296,7 @@ const ContentVaultView = () => {
     const cycle: Post['status'][] = ['draft', 'live', 'archive'];
     const next = cycle[(cycle.indexOf(post.status) + 1) % cycle.length];
     await updatePost(post.id, { status: next });
-    showToast(`Status → ${next}`);
+    showToast(`Status ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ${next}`);
   };
 
   const selectPost = (post: Post) => {
@@ -321,7 +337,7 @@ const ContentVaultView = () => {
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-neutral w-full max-w-2xl max-h-[90vh] overflow-y-auto technical-card p-10"
+              className="bg-neutral/95 backdrop-blur-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto technical-card p-10"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-8">
@@ -350,7 +366,7 @@ const ContentVaultView = () => {
                   <div><label className={labelCls}>Read Time</label><input className={inputCls} value={form.readTime} onChange={e => setForm(f => ({...f, readTime: e.target.value}))} placeholder="8 min" /></div>
                 </div>
                 <div><label className={labelCls}>Image URL</label><input className={inputCls} value={form.imageUrl} onChange={e => setForm(f => ({...f, imageUrl: e.target.value}))} placeholder="https://..." /></div>
-                <div><label className={labelCls}>Coordinates</label><input className={inputCls} value={form.coordinates} onChange={e => setForm(f => ({...f, coordinates: e.target.value}))} placeholder="78.22° N, 15.62° E" /></div>
+                <div><label className={labelCls}>Coordinates</label><input className={inputCls} value={form.coordinates} onChange={e => setForm(f => ({...f, coordinates: e.target.value}))} placeholder="78.22Ãƒâ€šÃ‚Â° N, 15.62Ãƒâ€šÃ‚Â° E" /></div>
                 <div><label className={labelCls}>Gear Specs</label><input className={inputCls} value={form.gear} onChange={e => setForm(f => ({...f, gear: e.target.value}))} placeholder="Leica SL2-S | 35mm f/1.4" /></div>
               </div>
               <button
@@ -375,7 +391,7 @@ const ContentVaultView = () => {
           >
             <motion.div
               initial={{ scale: 0.95 }} animate={{ scale: 1 }}
-              className="bg-neutral technical-card p-10 max-w-sm w-full text-center"
+              className="bg-neutral/95 backdrop-blur-3xl technical-card p-10 max-w-sm w-full text-center"
             >
               <Trash2 size={24} className="text-tertiary mx-auto mb-4" />
               <h3 className="font-heading text-primary mb-2">Delete Entry?</h3>
@@ -449,7 +465,7 @@ const ContentVaultView = () => {
                     </button>
                   </td>
                   <td className="p-6 font-technical text-[10px] text-primary/60">
-                    {post.updatedAt ? new Date(post.updatedAt).toLocaleDateString() : '—'}
+                    {post.updatedAt ? new Date(post.updatedAt).toLocaleDateString() : 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'}
                   </td>
                   <td className="p-6 text-right">
                     <button
@@ -593,7 +609,7 @@ const DestinationsVaultView = () => {
     const cycle: DestinationStatus[] = ['active', 'visited', 'archive'];
     const next = cycle[(cycle.indexOf(dest.status) + 1) % cycle.length];
     await updateDestination(dest.id, { status: next });
-    showToast(`Status → ${next.toUpperCase()}`);
+    showToast(`Status ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ${next.toUpperCase()}`);
   };
 
   const selectDest = (dest: Destination) => {
@@ -633,7 +649,7 @@ const DestinationsVaultView = () => {
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-neutral w-full max-w-2xl max-h-[90vh] overflow-y-auto technical-card p-10"
+              className="bg-neutral/95 backdrop-blur-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto technical-card p-10"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-8">
@@ -644,7 +660,7 @@ const DestinationsVaultView = () => {
               </div>
               <div className="space-y-5">
                 <div><label className={labelCls}>Sector Title</label><input className={inputCls} value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} placeholder="E.g. Nordic Highlands..." /></div>
-                <div><label className={labelCls}>Location Display</label><input className={inputCls} value={form.location} onChange={e => setForm(f => ({...f, location: e.target.value}))} placeholder="E.g. Iceland // 64° N" /></div>
+                <div><label className={labelCls}>Location Display</label><input className={inputCls} value={form.location} onChange={e => setForm(f => ({...f, location: e.target.value}))} placeholder="E.g. Iceland // 64Ãƒâ€šÃ‚Â° N" /></div>
                 <div className="grid grid-cols-2 gap-4">
                    <div><label className={labelCls}>Latitude</label><input type="number" step="0.000001" className={inputCls} value={form.latitude} onChange={e => setForm(f => ({...f, latitude: parseFloat(e.target.value)}))} /></div>
                    <div><label className={labelCls}>Longitude</label><input type="number" step="0.000001" className={inputCls} value={form.longitude} onChange={e => setForm(f => ({...f, longitude: parseFloat(e.target.value)}))} /></div>
@@ -816,7 +832,7 @@ const DestinationsVaultView = () => {
       {/* Delete Confirmation Overlay */}
       {confirmDelete && (
         <div className="fixed inset-0 z-[110] bg-neutral/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="technical-card p-10 max-w-sm w-full bg-neutral shadow-2xl border-2 border-tertiary">
+          <div className="technical-card p-10 max-w-sm w-full bg-neutral/95 backdrop-blur-3xl shadow-2xl border-2 border-tertiary">
             <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-[0.3em] mb-4">Purge Protocol</h4>
             <p className="font-body text-lg text-primary mb-8 leading-relaxed">Permanent deletion of mission sector data detected. Proceed?</p>
             <div className="flex gap-4">
@@ -903,7 +919,7 @@ const CommunicationHubView = () => {
       </div>
 
       {/* Reading Pane */}
-      <div className="col-span-8 flex flex-col h-[700px] bg-neutral">
+      <div className="col-span-8 flex flex-col h-[700px] bg-neutral/30">
         {!selectedMsg ? (
           <div className="flex-1 flex flex-col items-center justify-center p-20 text-center space-y-4">
             <Mail size={40} className="text-primary/5" />
@@ -934,7 +950,7 @@ const CommunicationHubView = () => {
               </a>
             </div>
             
-            <div className="flex-1 p-12 bg-neutral relative overflow-hidden group">
+            <div className="flex-1 p-12 bg-transparent relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-8 text-primary opacity-[0.03] font-technical text-[120px] font-bold select-none leading-none">INQUIRY</div>
               
               <div className="max-w-2xl mx-auto relative z-10">
@@ -982,7 +998,7 @@ const CommunicationHubView = () => {
 function parseCoordinates(raw?: string): { lat: number; lon: number } | null {
   if (!raw) return null;
   // Strip degree symbols and cardinal directions, split on comma
-  const cleaned = raw.replace(/[°NSEW]/gi, '').trim();
+  const cleaned = raw.replace(/[Ãƒâ€šÃ‚Â°NSEW]/gi, '').trim();
   const parts = cleaned.split(',').map(s => parseFloat(s.trim()));
   if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
     return { lat: parts[0], lon: parts[1] };
@@ -1469,6 +1485,448 @@ const SecurityView = () => {
   );
 };
 
+// --- Manifest Registry (CMS) View ---
+
+const ManifestRegistryView = () => {
+  const [sectors, setSectors] = useState<SiteSectorDoc[]>([]);
+  const [activeSector, setActiveSector] = useState<SectorId>('home');
+  const [draftData, setDraftData] = useState<SectorContentMap[SectorId] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [toast, setToast] = useState<{ msg: string; type: 'success'|'error' } | null>(null);
+
+  useEffect(() => {
+    const unsub = subscribeToAllSectors((data) => {
+      setSectors(data);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    const loadDraft = async () => {
+      setLoading(true);
+      const draft = await getSectorDraft<SectorContentMap[SectorId]>(activeSector, true);
+      setDraftData(draft);
+      setLoading(false);
+    };
+    loadDraft();
+  }, [activeSector]);
+
+  const showToast = (msg: string, type: 'success'|'error' = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleSaveDraft = async () => {
+    setSaving(true);
+    try {
+      await saveSectorDraft(activeSector, draftData);
+      showToast(`${activeSector.toUpperCase()} manifest staged.`);
+    } catch { showToast('Draft synchronization failed.', 'error'); }
+    setSaving(false);
+  };
+
+  const handlePublish = async () => {
+    if (!confirm(`Authorize "Push to Live" protocol for ${activeSector.toUpperCase()}?`)) return;
+    setPublishing(true);
+    try {
+      await publishSectorContent(activeSector);
+      showToast(`${activeSector.toUpperCase()} manifest pushed to live.`);
+    } catch { showToast('Authorization failed.', 'error'); }
+    setPublishing(false);
+  };
+
+  const updateDraft = (path: string, value: unknown) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newData = { ...draftData } as any;
+    const parts = path.split('.');
+    let current = newData;
+    for (let i = 0; i < parts.length - 1; i++) {
+      current = current[parts[i]];
+    }
+    current[parts[parts.length - 1]] = value;
+    setDraftData(newData);
+  };
+
+  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-3 py-2 font-body text-sm text-primary focus:outline-none focus:border-tertiary transition-colors";
+  const labelCls = "block font-technical text-[8px] uppercase font-bold text-primary/40 mb-1";
+
+  const renderEditor = () => {
+    if (!draftData) return <div className="p-12 text-center opacity-30">INITIALIZING MANIFEST...</div>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = draftData as any;
+
+    switch (activeSector) {
+      case 'home':
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div><label className={labelCls}>Hero Title</label><input className={inputCls} value={data?.heroTitle || ""} onChange={e => updateDraft('heroTitle', e.target.value)} /></div>
+              <div><label className={labelCls}>Status Label</label><input className={inputCls} value={data?.label || ""} onChange={e => updateDraft('label', e.target.value)} /></div>
+            </div>
+            <div><label className={labelCls}>Hero Description</label><textarea className={inputCls} rows={3} value={data?.heroDescription || ""} onChange={e => updateDraft('heroDescription', e.target.value)} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className={labelCls}>Coordinates</label><input className={inputCls} value={data?.coordinates || ""} onChange={e => updateDraft('coordinates', e.target.value)} /></div>
+              <div><label className={labelCls}>Altitude</label><input className={inputCls} value={data?.altitude || ""} onChange={e => updateDraft('altitude', e.target.value)} /></div>
+            </div>
+          </div>
+        );
+      case 'about':
+        return (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div><label className={labelCls}>Page Title</label><input className={inputCls} value={data?.title || ""} onChange={e => updateDraft('title', e.target.value)} /></div>
+              <div><label className={labelCls}>Subject ID</label><input className={inputCls} value={data?.subjectId || ""} onChange={e => updateDraft('subjectId', e.target.value)} /></div>
+            </div>
+            <div><label className={labelCls}>Narrative Summary</label><textarea className={inputCls} rows={3} value={data?.description || ""} onChange={e => updateDraft('description', e.target.value)} /></div>
+            
+            {/* Narrative Phases */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Narrative Phases</h4>
+                <button onClick={() => updateDraft('phases', [...(data?.phases || []), { title: 'New Phase', content: '' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Phase</button>
+              </div>
+              <div className="space-y-4">
+                {data?.phases?.map((phase: { title: string; content: string }, i: number) => (
+                  <div key={i} className="p-4 border border-primary/5 bg-primary/[0.01] space-y-3 relative group">
+                    <button onClick={() => updateDraft('phases', (data?.phases || []).filter((_: unknown, idx: number) => idx !== i))} className="absolute top-2 right-2 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={12} /></button>
+                    <div><label className={labelCls}>Title</label><input className={inputCls} value={phase.title} onChange={e => {
+                      const newPhases = [...(data?.phases || [])];
+                      newPhases[i].title = e.target.value;
+                      updateDraft('phases', newPhases);
+                    }} /></div>
+                    <div><label className={labelCls}>Content</label><textarea className={inputCls} rows={2} value={phase.content} onChange={e => {
+                      const newPhases = [...(data?.phases || [])];
+                      newPhases[i].content = e.target.value;
+                      updateDraft('phases', newPhases);
+                    }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Metrics */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Technical DNA Metrics</h4>
+                <button onClick={() => updateDraft('metrics', [...(data?.metrics || []), { label: 'New Metric', val: '0', desc: '', icon: 'Zap' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Metric</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data?.metrics?.map((metric: { label: string; val: string; desc: string; icon: string }, i: number) => (
+                  <div key={i} className="p-4 border border-primary/5 bg-primary/[0.01] space-y-3 relative group">
+                    <button onClick={() => updateDraft('metrics', (data?.metrics || []).filter((_: unknown, idx: number) => idx !== i))} className="absolute top-2 right-2 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={12} /></button>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div><label className={labelCls}>Label</label><input className={inputCls} value={metric.label} onChange={e => {
+                        const newMetrics = [...(data?.metrics || [])];
+                        newMetrics[i].label = e.target.value;
+                        updateDraft('metrics', newMetrics);
+                      }} /></div>
+                      <div><label className={labelCls}>Value</label><input className={inputCls} value={metric.val} onChange={e => {
+                        const newMetrics = [...(data?.metrics || [])];
+                        newMetrics[i].val = e.target.value;
+                        updateDraft('metrics', newMetrics);
+                      }} /></div>
+                    </div>
+                    <div><label className={labelCls}>Description</label><input className={inputCls} value={metric.desc} onChange={e => {
+                      const newMetrics = [...(data?.metrics || [])];
+                      newMetrics[i].desc = e.target.value;
+                      updateDraft('metrics', newMetrics);
+                    }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* FAQs */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Operational FAQs</h4>
+                <button onClick={() => updateDraft('faqs', [...(data?.faqs || []), { q: 'New Question?', a: '', ref: 'SEC_00' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add FAQ</button>
+              </div>
+              <div className="space-y-4">
+                {data?.faqs?.map((faq: { q: string; a: string; ref: string }, i: number) => (
+                  <div key={i} className="p-4 border border-primary/5 bg-primary/[0.01] space-y-3 relative group">
+                    <button onClick={() => updateDraft('faqs', (data?.faqs || []).filter((_: unknown, idx: number) => idx !== i))} className="absolute top-2 right-2 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={12} /></button>
+                    <div><label className={labelCls}>Question</label><input className={inputCls} value={faq.q} onChange={e => {
+                      const newFaqs = [...(data?.faqs || [])];
+                      newFaqs[i].q = e.target.value;
+                      updateDraft('faqs', newFaqs);
+                    }} /></div>
+                    <div><label className={labelCls}>Answer</label><textarea className={inputCls} rows={2} value={faq.a} onChange={e => {
+                      const newFaqs = [...(data?.faqs || [])];
+                      newFaqs[i].a = e.target.value;
+                      updateDraft('faqs', newFaqs);
+                    }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      case 'gear':
+        return (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div><label className={labelCls}>Manifest Title</label><input className={inputCls} value={data?.title || ""} onChange={e => updateDraft('title', e.target.value)} /></div>
+              <div><label className={labelCls}>Featured Title</label><input className={inputCls} value={data?.featured?.title || ""} onChange={e => updateDraft('featured.title', e.target.value)} /></div>
+            </div>
+            <div><label className={labelCls}>Manifest Description</label><textarea className={inputCls} rows={2} value={data?.description || ""} onChange={e => updateDraft('description', e.target.value)} /></div>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Inventory Registry</h4>
+                <button onClick={() => updateDraft('items', [...(data?.items || []), { id: `TECH_${Date.now()}`, name: 'New Hardware', category: 'Photography', ref: '#0000', val1: '-', label1: '-', val2: '-', label2: '-', img: '', icon: 'Camera' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Hardware</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data?.items?.map((item: import("@/types").GearItem, i: number) => (
+                  <div key={item.id} className="p-4 border border-primary/5 bg-primary/[0.01] space-y-3 relative group">
+                    <button onClick={() => updateDraft('items', data.items.filter((_: unknown, idx: number) => idx !== i))} className="absolute top-2 right-2 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={12} /></button>
+                    <div><label className={labelCls}>Name</label><input className={inputCls} value={item.name} onChange={e => {
+                      const newItems = [...(data?.items || [])];
+                      newItems[i].name = e.target.value;
+                      updateDraft('items', newItems);
+                    }} /></div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div><label className={labelCls}>Ref#</label><input className={inputCls} value={item.ref} onChange={e => {
+                        const newItems = [...(data?.items || [])];
+                        newItems[i].ref = e.target.value;
+                        updateDraft('items', newItems);
+                      }} /></div>
+                      <div><label className={labelCls}>Category</label><input className={inputCls} value={item.category} onChange={e => {
+                        const newItems = [...(data?.items || [])];
+                        newItems[i].category = e.target.value;
+                        updateDraft('items', newItems);
+                      }} /></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Featured Hardware Specs</h4>
+                <button onClick={() => updateDraft('featured.specs', [...(data?.featured?.specs || []), { l: 'Spec', v: 'Value' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Spec</button>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {data?.featured?.specs?.map((spec: { l: string; v: string }, i: number) => (
+                  <div key={i} className="flex gap-2 relative group">
+                    <input className={inputCls} value={spec.l} placeholder="Label" onChange={e => {
+                      const newSpecs = [...(data?.featured.specs || [])];
+                      newSpecs[i].l = e.target.value;
+                      updateDraft('featured.specs', newSpecs);
+                    }} />
+                    <input className={inputCls} value={spec.v} placeholder="Value" onChange={e => {
+                      const newSpecs = [...(data?.featured.specs || [])];
+                      newSpecs[i].v = e.target.value;
+                      updateDraft('featured.specs', newSpecs);
+                    }} />
+                    <button onClick={() => updateDraft('featured.specs', data.featured.specs.filter((_: unknown, idx: number) => idx !== i))} className="text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={10} /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      case 'gastronomy':
+        return (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div><label className={labelCls}>Hero Title</label><input className={inputCls} value={data?.heroTitle || ""} onChange={e => updateDraft('heroTitle', e.target.value)} /></div>
+              <div><label className={labelCls}>Hero Description</label><textarea className={inputCls} rows={2} value={data?.heroDescription || ""} onChange={e => updateDraft('heroDescription', e.target.value)} /></div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Culinary Archive</h4>
+                <button onClick={() => updateDraft('dishes', [...(data?.dishes || []), { id: `dish_${Date.now()}`, region: 'Global', country: 'Unknown', title: 'New Discovery', img: '', cols: 'md:col-span-4', aspect: 'aspect-square', bgHover: 'bg-primary/20' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Dish</button>
+              </div>
+              <div className="space-y-4">
+                {data?.dishes?.map((dish: import("@/types").GastronomyDish, i: number) => (
+                  <div key={dish.id} className="p-6 border border-primary/5 bg-primary/[0.01] grid grid-cols-1 md:grid-cols-3 gap-6 relative group">
+                    <button onClick={() => updateDraft('dishes', data.dishes.filter((_: unknown, idx: number) => idx !== i))} className="absolute top-4 right-4 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={14} /></button>
+                    <div className="md:col-span-1"><label className={labelCls}>Title</label><input className={inputCls} value={dish.title} onChange={e => {
+                      const newDishes = [...(data?.dishes || [])];
+                      newDishes[i].title = e.target.value;
+                      updateDraft('dishes', newDishes);
+                    }} /></div>
+                    <div className="md:col-span-1"><label className={labelCls}>Country</label><input className={inputCls} value={dish.country} onChange={e => {
+                      const newDishes = [...(data?.dishes || [])];
+                      newDishes[i].country = e.target.value;
+                      updateDraft('dishes', newDishes);
+                    }} /></div>
+                    <div className="md:col-span-1"><label className={labelCls}>Image URL</label><input className={inputCls} value={dish.img} onChange={e => {
+                      const newDishes = [...(data?.dishes || [])];
+                      newDishes[i].img = e.target.value;
+                      updateDraft('dishes', newDishes);
+                    }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Spotlight Narrative</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label className={labelCls}>Spotlight Title</label><input className={inputCls} value={data?.spotlight?.title || ""} onChange={e => updateDraft('spotlight.title', e.target.value)} /></div>
+                <div><label className={labelCls}>Saturation Level</label><input className={inputCls} value={data?.spotlight?.saturation || ""} onChange={e => updateDraft('spotlight.saturation', e.target.value)} /></div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'logistics':
+        return (
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 gap-6">
+              <div><label className={labelCls}>Target Latency</label><input className={inputCls} value={data?.latency || ""} onChange={e => updateDraft('latency', e.target.value)} /></div>
+              <div><label className={labelCls}>System Uptime</label><input className={inputCls} value={data?.uptime || ""} onChange={e => updateDraft('uptime', e.target.value)} /></div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Travel Resources</h4>
+                <button onClick={() => updateDraft('resources', [...(data?.resources || []), { title: 'New Resource', desc: '', icon: 'Zap', stat: '0%' }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Resource</button>
+              </div>
+              <div className="space-y-4">
+                {data?.resources?.map((res: { title: string; desc: string; icon: string; stat: string }, i: number) => (
+                  <div key={i} className="p-4 border border-primary/5 bg-primary/[0.01] grid grid-cols-1 md:grid-cols-2 gap-4 relative group">
+                    <button onClick={() => updateDraft('resources', data.resources.filter((_: unknown, idx: number) => idx !== i))} className="absolute top-2 right-2 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={12} /></button>
+                    <div><label className={labelCls}>Title</label><input className={inputCls} value={res.title} onChange={e => {
+                      const newRes = [...(data?.resources || [])];
+                      newRes[i].title = e.target.value;
+                      updateDraft('resources', newRes);
+                    }} /></div>
+                    <div><label className={labelCls}>Stat</label><input className={inputCls} value={res.stat} onChange={e => {
+                      const newRes = [...(data?.resources || [])];
+                      newRes[i].stat = e.target.value;
+                      updateDraft('resources', newRes);
+                    }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-widest">Infrastructure Dashboard</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className={labelCls}>Global Uplink</label><input className={inputCls} value={data?.infrastructure?.uplink || ""} onChange={e => updateDraft('infrastructure.uplink', e.target.value)} /></div>
+                <div><label className={labelCls}>Local Grid</label><input className={inputCls} value={data?.infrastructure?.localGrid || ""} onChange={e => updateDraft('infrastructure.localGrid', e.target.value)} /></div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <label className={labelCls}>Timezone Synchronicity</label>
+                  <button onClick={() => updateDraft('infrastructure.timezones', [...(data?.infrastructure?.timezones || []), { city: 'New Node', utc: 'UTC+0', active: false }])} className="font-technical text-[8px] text-primary/40 hover:text-tertiary uppercase font-bold">+ Add Node</button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {data?.infrastructure?.timezones?.map((tz: { city: string; utc: string; active: boolean }, i: number) => (
+                    <div key={i} className={`p-3 border relative group ${tz.active ? 'border-tertiary bg-tertiary/5' : 'border-primary/10'}`}>
+                      <button onClick={() => updateDraft('infrastructure.timezones', data.infrastructure.timezones.filter((_: unknown, idx: number) => idx !== i))} className="absolute top-1 right-1 text-primary/20 hover:text-tertiary opacity-0 group-hover:opacity-100"><Trash2 size={8} /></button>
+                      <input className="w-full bg-transparent font-technical text-[8px] font-bold text-primary/40 uppercase mb-2 focus:outline-none" value={tz.city} onChange={e => {
+                        const newTZ = [...(data?.infrastructure.timezones || [])];
+                        newTZ[i].city = e.target.value;
+                        updateDraft('infrastructure.timezones', newTZ);
+                      }} />
+                      <input className="w-full bg-transparent font-technical text-xs font-bold text-primary focus:outline-none" value={tz.utc} onChange={e => {
+                        const newTZ = [...(data?.infrastructure.timezones || [])];
+                        newTZ[i].utc = e.target.value;
+                        updateDraft('infrastructure.timezones', newTZ);
+                      }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-12 gap-8">
+      {/* Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-8 right-8 z-[100] px-6 py-4 font-technical text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 shadow-2xl ${
+              toast.type === 'success' ? 'bg-primary text-neutral' : 'bg-tertiary text-neutral'
+            }`}
+          >
+            <CheckCircle size={14} />{toast.msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="col-span-12 lg:col-span-3 technical-card bg-neutral/50 p-6 space-y-4 border border-primary/5">
+        <h3 className="font-technical text-[10px] uppercase tracking-widest text-primary/40 font-bold mb-6">Mission Sectors</h3>
+        {['home', 'about', 'gear', 'gastronomy', 'logistics'].map((id) => (
+          <button
+            key={id}
+            onClick={() => setActiveSector(id as SectorId)}
+            className={`w-full text-left px-4 py-3 font-technical text-[9px] font-bold uppercase tracking-widest transition-all border ${
+              activeSector === id ? 'border-tertiary bg-tertiary/[0.05] text-tertiary' : 'border-primary/5 text-primary/40 hover:text-primary hover:border-primary/10'
+            }`}
+          >
+            {id} Manifest
+          </button>
+        ))}
+      </div>
+
+      <div className="col-span-12 lg:col-span-9 space-y-8">
+        <div className="technical-card bg-neutral/50 p-10 border border-primary/5">
+          <div className="flex justify-between items-center mb-12 border-b border-primary/5 pb-8">
+            <div>
+              <p className="font-technical text-[10px] text-tertiary font-bold tracking-widest uppercase mb-1">{activeSector} Registry</p>
+              <h2 className="font-heading text-primary">Intelligence Manifest</h2>
+            </div>
+            <div className="flex gap-4">
+              <button
+                onClick={handleSaveDraft}
+                disabled={saving || loading}
+                className="px-6 py-3 border border-primary/20 font-technical text-[9px] font-bold uppercase tracking-widest text-primary/60 hover:text-primary hover:border-primary/40 transition-all flex items-center gap-2"
+              >
+                {saving ? <Loader2 size={12} className="animate-spin" /> : <Database size={12} />}
+                Stage Draft
+              </button>
+              <button
+                onClick={handlePublish}
+                disabled={publishing || loading}
+                className="px-8 py-3 bg-tertiary text-neutral font-technical text-[9px] font-bold uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-2 shadow-xl"
+              >
+                {publishing ? <Loader2 size={12} className="animate-spin" /> : <Target size={12} />}
+                Push to Live
+              </button>
+            </div>
+          </div>
+
+          <div className="relative min-h-[400px]">
+            {loading ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 size={24} className="animate-spin text-primary/20" />
+              </div>
+            ) : (
+              renderEditor()
+            )}
+          </div>
+        </div>
+
+        <div className="p-8 technical-card bg-primary/[0.02] border border-primary/5">
+          <div className="flex items-center gap-4 text-primary/40">
+            <Shield size={14} />
+            <p className="font-technical text-[8px] uppercase tracking-widest font-bold">
+              Draft changes are stored in the staging manifest. Authorized &quot;Push to Live&quot; protocol will synchronize the public-facing registry across all nodes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // --- Auth Portal ---
 
 const AuthPortal = () => {
@@ -1492,7 +1950,7 @@ const AuthPortal = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] bg-neutral flex items-center justify-center p-6 overflow-hidden">
+    <div className="fixed inset-0 z-[200] bg-transparent flex items-center justify-center p-6 overflow-hidden">
       <TechnicalOverlay className="opacity-10" />
       <Scanline />
       
@@ -1536,7 +1994,7 @@ const AuthPortal = () => {
                 type="password" required
                 value={password} onChange={e => setPassword(e.target.value)}
                 className="w-full bg-primary/5 border border-primary/10 p-4 font-technical text-xs text-primary focus:border-tertiary outline-none transition-colors"
-                placeholder="••••••••"
+                placeholder="ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢"
               />
             </div>
 
@@ -1603,7 +2061,7 @@ export default function AdminPage() {
   // Show global loader while checking auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-neutral flex items-center justify-center flex-col gap-4">
+      <div className="min-h-screen bg-transparent flex items-center justify-center flex-col gap-4">
         <TechnicalOverlay className="opacity-10" />
         <Loader2 className="animate-spin text-tertiary" size={40} />
         <span className="font-technical text-[8px] uppercase tracking-[0.4em] text-primary/40">Synchronizing Biometrics...</span>
@@ -1617,7 +2075,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="relative min-h-screen bg-neutral flex">
+    <main className="relative min-h-screen bg-transparent flex">
       {/* Sidebar Navigation */}
       <aside className="fixed left-0 h-screen w-64 border-r border-primary/5 bg-neutral/80 backdrop-blur-2xl flex flex-col py-8 px-4 z-50">
         <div className="mb-12 px-4 flex justify-between items-start">
@@ -1634,6 +2092,7 @@ export default function AdminPage() {
           {[
             { id: "control", label: "Mission Control", icon: Terminal },
             { id: "vault", label: "Content Vault", icon: Database },
+            { id: "cms", label: "Intelligence Manifest", icon: Layers },
             { id: "destinations", label: "Journey Registry", icon: MapPin },
             { id: "inbox", label: "Communication Hub", icon: Inbox },
             { id: "analytics", label: "System Analytics", icon: BarChart3 },
@@ -1684,7 +2143,7 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content Area */}
-      <section className="flex-1 ml-64 p-12 bg-neutral relative overflow-hidden">
+      <section className="flex-1 ml-64 p-12 bg-transparent relative overflow-hidden">
         <TechnicalOverlay className="opacity-5" />
         
         <header className="flex justify-between items-end mb-16 relative z-10">
@@ -1696,6 +2155,7 @@ export default function AdminPage() {
             <h2 className="font-heading">
               {activeTab === 'control' && "Mission Control"}
               {activeTab === 'vault' && "Content Vault"}
+              {activeTab === 'cms' && "Intelligence Manifest"}
               {activeTab === 'destinations' && "Journey Registry"}
               {activeTab === 'inbox' && "Communication Hub"}
               {activeTab === 'analytics' && "System Analytics"}
@@ -1705,6 +2165,7 @@ export default function AdminPage() {
             <p className="font-body">
               {activeTab === 'control' && "Overseeing global operations and real-time mission synchronization."}
               {activeTab === 'vault' && "Specialized environment for the management of cinematic storytelling artifacts."}
+              {activeTab === 'cms' && "Global Content Registry for real-time narrative management and sector manifestations."}
               {activeTab === 'destinations' && "Administrative oversight of global mission sectors and geographic registries."}
               {activeTab === 'inbox' && "Encrypted transmission matrix for secure expedition communications."}
               {activeTab === 'analytics' && "Geometric mapping of global traffic metrics and infrastructure health."}
@@ -1724,6 +2185,7 @@ export default function AdminPage() {
           >
             {activeTab === 'control' && <MissionControlView />}
             {activeTab === 'vault' && <ContentVaultView />}
+            {activeTab === 'cms' && <ManifestRegistryView />}
             {activeTab === 'destinations' && <DestinationsVaultView />}
             {activeTab === 'inbox' && <CommunicationHubView />}
             {activeTab === 'analytics' && <SystemAnalyticsView />}
@@ -1733,7 +2195,7 @@ export default function AdminPage() {
         </AnimatePresence>
 
         <footer className="mt-20 pt-8 border-t border-primary/5 flex justify-between items-center relative z-10">
-           <p className="font-technical text-[8px] text-primary/20 tracking-[0.4em] uppercase">© 2026 Divine&apos;s Destinations // Terminal V.0.4.2</p>
+           <p className="font-technical text-[8px] text-primary/20 tracking-[0.4em] uppercase">Ãƒâ€šÃ‚Â© 2026 Divine&apos;s Destinations // Terminal V.0.4.2</p>
            <div className="flex gap-8">
               <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">System Status: Operational</span>
               <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">EU-CENTRAL-1 (Frankfurt)</span>

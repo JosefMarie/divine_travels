@@ -1,28 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowRight, MoveRight, Globe, Gauge, Compass } from "lucide-react";
+import { ArrowRight, Gauge, Compass, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-const metrics = [
-  { label: "OPERATIONAL RANGE", val: "Global Nomadism", desc: "Focusing on high-altitude terrains and coastal architecture across four continents.", icon: Compass },
-  { label: "GEAR SPEC", val: "85mm", desc: "Fixed Focal Length Preference", icon: Gauge, theme: "dark" },
-  { label: "SHUTTER RESPONSE", val: "0.02s", desc: "Technical Latency Minimalized", icon: Gauge },
-];
+import { subscribeToSectorContent } from "@/lib/db/content";
+import { AboutContent } from "@/types";
 
 export default function AboutPage() {
+  const [content, setContent] = useState<AboutContent | null>(null);
   const [activePhase, setActivePhase] = useState(1);
 
+  useEffect(() => {
+    const unsub = subscribeToSectorContent<AboutContent>('about', setContent);
+    return () => unsub();
+  }, []);
+
+  if (!content) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="animate-spin text-tertiary" size={40} />
+    </div>
+  );
+
   return (
-    <main className="relative min-h-screen bg-neutral">
+    <main className="relative min-h-screen bg-transparent">
       <Navbar />
-      <TechnicalOverlay className="opacity-10" />
+      <TechnicalOverlay className="opacity-[0.03]" />
 
       {/* Hero Section */}
       <section className="pt-40 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
@@ -44,7 +53,7 @@ export default function AboutPage() {
               
               {/* HUD Overlay */}
               <div className="absolute bottom-8 left-8 p-6 glass-panel border-l-2 border-tertiary max-w-[280px]">
-                <p className="font-technical text-[8px] text-tertiary mb-2 font-bold tracking-widest uppercase">Subject ID: 099-DIVINE</p>
+                <p className="font-technical text-[8px] text-tertiary mb-2 font-bold tracking-widest uppercase">Subject ID: {content.subjectId}</p>
                 <div className="grid grid-cols-2 gap-6 mt-4">
                   <div>
                     <p className="font-technical text-[7px] uppercase opacity-50 mb-1">Travel Radius</p>
@@ -66,11 +75,11 @@ export default function AboutPage() {
             </div>
             
             <h1 className="font-brand text-6xl md:text-8xl text-primary leading-[0.9] mb-8">
-              Divine&apos;s <br /> Perspective.
+              {content.title}
             </h1>
             
             <p className="font-body text-lg text-primary/70 mb-12 italic leading-relaxed">
-              Observing the world through a lens of technical precision and poetic silence. A journey defined not by distance, but by the density of the moments captured.
+              {content.description}
             </p>
 
             <Link href="#manifesto">
@@ -90,70 +99,39 @@ export default function AboutPage() {
           {/* Sticky Sidebar */}
           <div className="col-span-12 lg:col-span-3 hidden lg:block">
             <div className="sticky top-40 space-y-6">
-              <div className={`font-technical text-[10px] font-bold tracking-widest uppercase transition-colors duration-500 ${activePhase >= 1 ? 'text-tertiary' : 'text-primary/30'}`}>
-                01 / Genesis
-              </div>
-              
-              <div className="w-[1px] h-32 bg-primary/5 ml-2 relative overflow-hidden">
-                <motion.div 
-                  className="absolute top-0 left-0 w-full bg-tertiary transition-all duration-700 ease-out" 
-                  style={{ height: activePhase === 1 ? '33%' : activePhase === 2 ? '66%' : '100%' }} 
-                />
-              </div>
-              
-              <div className={`font-technical text-[10px] font-bold tracking-widest uppercase transition-colors duration-500 ${activePhase >= 2 ? 'text-tertiary' : 'text-primary/30'}`}>
-                02 / Evolution
-              </div>
-              
-              <div className="w-[1px] h-32 bg-primary/5 ml-2 relative overflow-hidden">
-                <motion.div 
-                  className="absolute top-0 left-0 w-full bg-tertiary transition-all duration-700 ease-out" 
-                  style={{ height: activePhase >= 3 ? '100%' : '0%' }} 
-                />
-              </div>
-
-              <div className={`font-technical text-[10px] font-bold tracking-widest uppercase transition-colors duration-500 ${activePhase === 3 ? 'text-tertiary' : 'text-primary/30'}`}>
-                03 / Current
-              </div>
+              {content.phases.map((phase, i) => (
+                <React.Fragment key={i}>
+                  <div className={`font-technical text-[10px] font-bold tracking-widest uppercase transition-colors duration-500 ${activePhase >= i + 1 ? 'text-tertiary' : 'text-primary/30'}`}>
+                    0{i+1} / {phase.title}
+                  </div>
+                  {i < content.phases.length - 1 && (
+                    <div className="w-[1px] h-32 bg-primary/5 ml-2 relative overflow-hidden">
+                      <motion.div 
+                        className="absolute top-0 left-0 w-full bg-tertiary transition-all duration-700 ease-out" 
+                        style={{ height: activePhase > i + 1 ? '100%' : activePhase === i + 1 ? '33%' : '0%' }} 
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
           </div>
           
           {/* Scrolling Content Blocks */}
           <div className="col-span-12 lg:col-span-7 space-y-48 pb-32">
-            <motion.div 
-              onViewportEnter={() => setActivePhase(1)} 
-              viewport={{ margin: "-40% 0px -40% 0px" }}
-              className={`transition-opacity duration-700 ${activePhase === 1 ? 'opacity-100' : 'opacity-40'}`}
-            >
-              <h2 className="font-heading text-primary mb-8">A dialogue between data and dreamscape.</h2>
-              <p className="font-body text-lg text-primary/60 leading-relaxed italic">
-                Divine began as an exercise in structural observation. In a world saturated with fleeting imagery, the goal was to create a sanctuary of precision. Every expedition is logged with the rigor of a flight manifest, yet experienced with the emotional depth of an editorial masterpiece.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              onViewportEnter={() => setActivePhase(2)} 
-              viewport={{ margin: "-40% 0px -40% 0px" }}
-              className={`transition-opacity duration-700 ${activePhase === 2 ? 'opacity-100' : 'opacity-40'}`}
-            >
-              <h2 className="font-heading text-primary mb-8">The Evolution of Documentation.</h2>
-              <div className="border-l-4 border-tertiary/20 pl-8 py-2 mb-8">
-                <p className="font-body text-primary/80 italic leading-relaxed">
-                  &quot;The technical data—the ISO settings, the coordinates, the barometric pressure—is not just metadata. It is the skeletal structure of a memory.&quot;
+            {content.phases.map((phase, i) => (
+              <motion.div 
+                key={i}
+                onViewportEnter={() => setActivePhase(i + 1)} 
+                viewport={{ margin: "-40% 0px -40% 0px" }}
+                className={`transition-opacity duration-700 ${activePhase === i + 1 ? 'opacity-100' : 'opacity-40'}`}
+              >
+                <h2 className="font-heading text-primary mb-8">{phase.title}.</h2>
+                <p className="font-body text-lg text-primary/60 leading-relaxed italic">
+                  {phase.content}
                 </p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              onViewportEnter={() => setActivePhase(3)} 
-              viewport={{ margin: "-40% 0px -40% 0px" }}
-              className={`transition-opacity duration-700 ${activePhase === 3 ? 'opacity-100' : 'opacity-40'}`}
-            >
-              <h2 className="font-heading text-primary mb-8">Current Operations.</h2>
-              <p className="font-body text-lg text-primary/60 leading-relaxed italic">
-                This narrative is built upon the pillars of intentional luxury. It is for the elite voyager who seeks the quietest corner of the busiest city, the sharpest focus in the softest light, and the technical truth behind every curated aesthetic. The operation has expanded from a singular perspective into a global archive.
-              </p>
-            </motion.div>
+              </motion.div>
+            ))}
           </div>
           
         </div>
@@ -168,22 +146,25 @@ export default function AboutPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-           {metrics.map((m, i) => (
-             <div key={i} className={`p-10 border border-primary/5 relative group overflow-hidden cursor-pointer transition-all duration-500 technical-card hover:border-tertiary/20 ${m.theme === 'dark' ? '!bg-primary text-neutral' : 'bg-neutral/50'}`}>
-                <div className="flex justify-between items-start mb-12">
-                   <motion.div 
-                     whileHover={{ rotate: 360 }} 
-                     transition={{ duration: 0.8 }}
-                     className={m.theme === 'dark' ? 'text-tertiary' : 'text-primary/30 group-hover:text-tertiary transition-colors duration-500'}
-                   >
-                    <m.icon size={24} />
-                   </motion.div>
-                   <p className="font-technical text-[8px] font-bold tracking-tighter opacity-50 uppercase group-hover:text-tertiary group-hover:opacity-100 transition-all duration-500">{m.label}</p>
-                </div>
-                <p className="font-heading mb-2 group-hover:translate-x-1 transition-transform duration-500">{m.val}</p>
-                <p className="font-body text-xs opacity-50 italic group-hover:opacity-80 transition-opacity duration-500">{m.desc}</p>
-             </div>
-           ))}
+           {content.metrics.map((m, i) => {
+             const Icon = m.icon === 'Compass' ? Compass : Gauge;
+             return (
+              <div key={i} className={`p-10 border border-primary/5 relative group overflow-hidden cursor-pointer transition-all duration-500 technical-card hover:border-tertiary/20 ${m.theme === 'dark' ? '!bg-primary text-neutral' : 'bg-neutral/50'}`}>
+                  <div className="flex justify-between items-start mb-12">
+                    <motion.div 
+                      whileHover={{ rotate: 360 }} 
+                      transition={{ duration: 0.8 }}
+                      className={m.theme === 'dark' ? 'text-tertiary' : 'text-primary/30 group-hover:text-tertiary transition-colors duration-500'}
+                    >
+                      <Icon size={24} />
+                    </motion.div>
+                    <p className="font-technical text-[8px] font-bold tracking-tighter opacity-50 uppercase group-hover:text-tertiary group-hover:opacity-100 transition-all duration-500">{m.label}</p>
+                  </div>
+                  <p className="font-heading mb-2 group-hover:translate-x-1 transition-transform duration-500">{m.val}</p>
+                  <p className="font-body text-xs opacity-50 italic group-hover:opacity-80 transition-opacity duration-500">{m.desc}</p>
+              </div>
+             );
+           })}
            <div className="md:col-span-1 p-10 bg-neutral/50 border border-primary/5 flex flex-col justify-center relative group overflow-hidden cursor-pointer transition-all duration-500 technical-card hover:border-tertiary/20">
               <p className="font-technical text-[8px] font-bold text-tertiary mb-6 tracking-widest uppercase">Core Philosophy</p>
               <ul className="space-y-4">
@@ -206,12 +187,7 @@ export default function AboutPage() {
         </div>
 
         <div className="space-y-4">
-          {[
-            { q: "Mission Protocol", a: "Destinations are selected through a rigorous analysis of architectural significance, geographic isolation, and visual storytelling potential.", ref: "INT_MSG_01" },
-            { q: "Hardware Integrity", a: "Standard operational gear includes the Leica SL2-S for visual documentation, technical apparel for extreme climates, and satellite communication arrays.", ref: "INT_MSG_02" },
-            { q: "Data Archiving", a: "Every expedition is logged with full technical metadata including exact coordinates, atmospheric conditions, and precise exposure parameters.", ref: "INT_MSG_03" },
-            { q: "Operational Access", a: "Inquiries regarding bespoke itineraries or collaborative expeditions should be directed through the encrypted communication hub in Mission Control.", ref: "INT_MSG_04" },
-          ].map((item, i) => (
+          {content.faqs.map((item, i) => (
             <details key={i} className="group border border-primary/5 bg-neutral/30 transition-all duration-500 open:bg-neutral/80 hover:-translate-y-1 hover:shadow-lg hover:border-tertiary/20 hover:bg-neutral/50">
               <summary className="flex items-center justify-between p-8 cursor-pointer list-none">
                 <div className="flex items-center gap-8">

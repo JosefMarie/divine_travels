@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
-import { Key, AlertTriangle, FileWarning, Camera } from "lucide-react";
+import { TechnicalOverlay } from "@/components/ui/TechnicalOverlay";
+import { Key, AlertTriangle, Camera } from "lucide-react";
 
 export default function TermsPage() {
   const [activeSection, setActiveSection] = useState("access");
@@ -34,7 +34,7 @@ export default function TermsPage() {
   ];
 
   return (
-    <main className="relative min-h-screen bg-neutral selection:bg-tertiary selection:text-neutral">
+    <main className="relative min-h-screen bg-transparent selection:bg-tertiary selection:text-neutral">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
 

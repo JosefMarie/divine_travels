@@ -23,7 +23,7 @@ export default function StatusPage() {
   ];
 
   return (
-    <main className="relative min-h-screen bg-neutral selection:bg-tertiary selection:text-neutral">
+    <main className="relative min-h-screen bg-transparent selection:bg-tertiary selection:text-neutral">
       <Navbar />
       <TechnicalOverlay className="opacity-10" />
 
