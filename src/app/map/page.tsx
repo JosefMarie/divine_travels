@@ -1,9 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/layout/Navbar";
 import { TechnicalOverlay } from "@/components/ui/TechnicalOverlay";
-import MapEngine from "@/components/map/MapEngine";
+const MapEngine = dynamic(() => import("@/components/map/MapEngine"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-neutral">
+      <div className="font-technical text-[10px] text-primary/40 animate-pulse uppercase tracking-[0.3em]">
+        Initializing Map Engine...
+      </div>
+    </div>
+  )
+});
 import { ArrowRight, Grid3X3, PlaneTakeoff } from "lucide-react";
 import { motion } from "framer-motion";
 

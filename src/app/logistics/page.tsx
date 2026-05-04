@@ -57,7 +57,7 @@ export default function LogisticsPage() {
       <header className="relative h-screen flex items-center px-6 md:px-12 lg:px-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2000" 
+            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=75&w=1200" 
             alt="Remote Workspace" 
             fill
             className="object-cover grayscale brightness-50 contrast-125"
@@ -190,7 +190,7 @@ export default function LogisticsPage() {
                 </div>
                 <div className="mt-12 h-64 relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 border border-neutral/5">
                    <Image 
-                    src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=80&w=1000" 
+                    src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=70&w=800" 
                     alt="Hardware" 
                     fill 
                     className="object-cover"

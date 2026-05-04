@@ -15,7 +15,7 @@ const CONTENT_COLLECTION = 'site_content';
 /**
  * Fetches the current live (published) content for a specific sector.
  */
-export const getSectorContent = async <T>(sectorId: SectorId, forceServer = false): Promise<T | null> => {
+export async function getSectorContent<T>(sectorId: SectorId, forceServer = false): Promise<T | null> {
   try {
     const docRef = doc(db, CONTENT_COLLECTION, sectorId);
     const docSnap = forceServer ? await getDocFromServer(docRef) : await getDoc(docRef);
@@ -28,12 +28,12 @@ export const getSectorContent = async <T>(sectorId: SectorId, forceServer = fals
     console.error(`Error fetching published content for ${sectorId}:`, error);
     return null;
   }
-};
+}
 
 /**
  * Fetches the draft content for administrative editing.
  */
-export const getSectorDraft = async <T>(sectorId: SectorId, forceServer = false): Promise<T | null> => {
+export async function getSectorDraft<T>(sectorId: SectorId, forceServer = false): Promise<T | null> {
   try {
     const docRef = doc(db, CONTENT_COLLECTION, sectorId);
     const docSnap = forceServer ? await getDocFromServer(docRef) : await getDoc(docRef);
@@ -46,12 +46,12 @@ export const getSectorDraft = async <T>(sectorId: SectorId, forceServer = false)
     console.error(`Error fetching draft content for ${sectorId}:`, error);
     return null;
   }
-};
+}
 
 /**
  * Saves content to the draft staging area.
  */
-export const saveSectorDraft = async <T>(sectorId: SectorId, data: T) => {
+export async function saveSectorDraft<T>(sectorId: SectorId, data: T) {
   try {
     const docRef = doc(db, CONTENT_COLLECTION, sectorId);
     
@@ -78,12 +78,12 @@ export const saveSectorDraft = async <T>(sectorId: SectorId, data: T) => {
     console.error(`Error saving draft for ${sectorId}:`, error);
     throw error;
   }
-};
+}
 
 /**
  * Authorizes the current draft to be pushed to the live site.
  */
-export const publishSectorContent = async (sectorId: SectorId) => {
+export async function publishSectorContent(sectorId: SectorId) {
   try {
     const docRef = doc(db, CONTENT_COLLECTION, sectorId);
     const docSnap = await getDocFromServer(docRef);
@@ -103,15 +103,15 @@ export const publishSectorContent = async (sectorId: SectorId) => {
     console.error(`Error publishing content for ${sectorId}:`, error);
     throw error;
   }
-};
+}
 
 /**
  * Subscribes to published content for real-time updates on the public pages.
  */
-export const subscribeToSectorContent = <T>(
+export function subscribeToSectorContent<T>(
   sectorId: SectorId, 
   callback: (data: T) => void
-) => {
+) {
   const docRef = doc(db, CONTENT_COLLECTION, sectorId);
   return onSnapshot(docRef, (docSnap) => {
     if (docSnap.exists()) {
@@ -121,15 +121,15 @@ export const subscribeToSectorContent = <T>(
       }
     }
   });
-};
+}
 
 /**
  * Subscribes to all sector manifests for the Admin Dashboard.
  */
-export const subscribeToAllSectors = (callback: (data: SiteSectorDoc[]) => void) => {
+export function subscribeToAllSectors(callback: (data: SiteSectorDoc[]) => void) {
   const colRef = collection(db, CONTENT_COLLECTION);
   return onSnapshot(colRef, (snapshot) => {
     const sectors = snapshot.docs.map(d => d.data() as SiteSectorDoc);
     callback(sectors);
   });
-};
+}

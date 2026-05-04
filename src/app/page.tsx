@@ -112,7 +112,7 @@ export default function Home() {
           <div className="col-span-12 lg:col-span-5 relative">
             <div className="group relative aspect-[4/5] overflow-hidden border border-primary/10 shadow-2xl">
               <Image 
-                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=2000" 
+                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=75&w=1200" 
                 alt="Luxury travel"
                 fill
                 priority
@@ -185,7 +185,7 @@ export default function Home() {
                     <div className="group cursor-pointer technical-card p-4 h-full flex flex-col">
                       <div className="relative aspect-[16/10] overflow-hidden border border-primary/5 group-hover:border-tertiary/20 transition-colors duration-500">
                         <Image 
-                          src={story.imageUrl || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} 
+                          src={`${story.imageUrl || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"}?auto=format&fit=crop&q=70&w=800`} 
                           alt={story.title}
                           fill
                           sizes="(max-width: 768px) 100vw, 33vw"

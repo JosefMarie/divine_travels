@@ -44,7 +44,7 @@ export default function GastronomyPage() {
       <section className="relative h-screen w-full flex items-center px-6 md:px-12 lg:px-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=2000" 
+            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=75&w=1200" 
             alt="Gastronomy" 
             fill
             className="object-cover grayscale-[0.2] brightness-75 contrast-125"
@@ -119,7 +119,7 @@ export default function GastronomyPage() {
             filteredDishes.map((dish) => (
               <div key={dish.id} className={`${dish.cols} group relative ${dish.aspect} overflow-hidden border border-primary/5 technical-card`}>
                  <Image 
-                  src={dish.img} 
+                  src={`${dish.img}?auto=format&fit=crop&q=70&w=800`} 
                   alt={dish.country} 
                   fill 
                   className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
