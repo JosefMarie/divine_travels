@@ -104,11 +104,11 @@ export default function GastronomyPage() {
             <span className="font-technical text-[10px] text-tertiary uppercase tracking-[0.4em] font-bold">Culinary Narratives</span>
           </div>
           
-          <h1 className="font-serif text-6xl md:text-8xl text-primary leading-none mb-12">
+          <h1 className="font-heading text-6xl md:text-8xl text-primary leading-none mb-12">
             Global <br /> Flavors.
           </h1>
           
-          <p className="font-serif text-xl text-primary/60 max-w-lg italic mb-16 leading-relaxed">
+          <p className="font-body text-xl text-primary/60 max-w-lg italic mb-16 leading-relaxed">
             An analytical exploration of gastronomy. We decode the DNA of regional cuisines, mapping the intersection of tradition and technical precision.
           </p>
 
@@ -140,7 +140,7 @@ export default function GastronomyPage() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8 border-b border-primary/5 pb-8">
           <div className="max-w-xl">
             <span className="font-technical text-[10px] text-tertiary mb-4 block uppercase font-bold tracking-widest">Sector_01 // Discovery</span>
-            <h2 className="font-serif text-5xl text-primary">Regional Cartography</h2>
+            <h2 className="font-heading text-primary">Regional Cartography</h2>
           </div>
           <div className="flex flex-wrap gap-4 font-technical text-[9px] font-bold uppercase tracking-widest">
             {regions.map((region) => (
@@ -172,7 +172,7 @@ export default function GastronomyPage() {
                  <Scanline />
                  <div className={`absolute inset-0 ${dish.bgHover} opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8 md:p-12`}>
                     <p className="font-technical text-[10px] text-neutral/80 uppercase tracking-widest mb-2 font-bold">Region: {dish.country}</p>
-                    <h3 className="font-serif text-3xl md:text-4xl text-neutral">{dish.title}</h3>
+                    <h3 className="font-heading md:text-4xl text-neutral">{dish.title}</h3>
                  </div>
               </div>
             ))
@@ -204,7 +204,7 @@ export default function GastronomyPage() {
                  <div className="w-1.5 h-1.5 bg-tertiary rounded-full animate-ping" />
                  Sector_02 // Spotlight
               </span>
-              <h2 className="font-serif text-5xl text-primary mb-12 relative inline-block">
+              <h2 className="font-heading text-primary mb-12 relative inline-block">
                 The Anatomy of Shio Ramen
                 <div className="absolute -bottom-4 left-0 w-1/3 h-[1px] bg-tertiary" />
               </h2>
@@ -219,7 +219,7 @@ export default function GastronomyPage() {
                     <span className="font-technical text-[8px] text-primary/30 uppercase font-bold tracking-widest block mb-2 transition-colors group-hover:text-tertiary">{item.label}</span>
                     <div className="flex items-center gap-4">
                       <div className="w-0 h-[1px] bg-tertiary transition-all duration-500 group-hover:w-4" />
-                      <p className="font-serif text-lg text-primary italic leading-relaxed group-hover:translate-x-2 transition-transform duration-500">{item.val}</p>
+                      <p className="font-body text-primary italic leading-relaxed group-hover:translate-x-2 transition-transform duration-500">{item.val}</p>
                     </div>
                   </div>
                 ))}

@@ -36,13 +36,20 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
   const [loading, setLoading] = useState(true);
   const [activePin, setActivePin] = useState<LivePin | null>(null);
 
+  const handleFlyTo = (longitude: number, latitude: number) => {
+    mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 6, duration: 3000, essential: true });
+  };
+
   // Handle external focus (e.g. from sidebar)
   useEffect(() => {
     if (focusLocation) {
       handleFlyTo(focusLocation.longitude, focusLocation.latitude);
       // Also set as active pin if it matches one of our posts
       const match = pins.find(p => p.post.id === focusLocation.id);
-      if (match) setActivePin(match);
+      if (match) {
+        const timer = setTimeout(() => setActivePin(match), 0);
+        return () => clearTimeout(timer);
+      }
     }
   }, [focusLocation, pins]);
 
@@ -59,10 +66,6 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
     });
     return () => unsub();
   }, []);
-
-  const handleFlyTo = (longitude: number, latitude: number) => {
-    mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 6, duration: 3000, essential: true });
-  };
 
   const handleZoom = (direction: 'in' | 'out') => {
     const currentZoom = mapRef.current?.getZoom() || 1;
@@ -136,7 +139,7 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
                 {/* Hover Tooltip */}
                 <div className="absolute -top-12 whitespace-nowrap bg-neutral/90 backdrop-blur-md px-3 py-1 border border-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0 pointer-events-none">
                   <span className={`font-technical text-[8px] font-bold uppercase tracking-widest ${statusColor(pin.post.status)}`}>
-                    {pin.post.title} // {pin.post.status.toUpperCase()}
+                    {pin.post.title} {"//"} {pin.post.status.toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -218,9 +221,9 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
               </button>
             </div>
 
-            <span className="font-technical text-[9px] text-primary/40 uppercase tracking-widest">{activePin.post.category}</span>
-            <h3 className="font-serif text-2xl text-primary mb-3 leading-tight mt-1">{activePin.post.title}</h3>
-            <p className="font-serif text-sm text-primary/60 italic mb-6 leading-relaxed line-clamp-3">
+            <span className="font-accent text-[9px] text-primary/40 uppercase tracking-widest">{activePin.post.category}</span>
+            <h3 className="font-heading text-2xl text-primary mb-3 leading-tight mt-1">{activePin.post.title}</h3>
+            <p className="font-body text-sm text-primary/60 italic mb-6 leading-relaxed line-clamp-3">
               {activePin.post.excerpt || 'No excerpt available.'}
             </p>
 

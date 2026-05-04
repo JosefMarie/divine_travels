@@ -21,7 +21,7 @@ export interface Message {
   createdAt: number;
 }
 
-export type MessageInput = Omit<Message, 'id' | 'createdAt'>;
+export type MessageInput = Omit<Message, 'id' | 'createdAt' | 'status'>;
 
 const COLLECTION = 'messages';
 const msgRef = collection(db, COLLECTION);

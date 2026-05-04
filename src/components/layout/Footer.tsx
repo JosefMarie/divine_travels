@@ -6,7 +6,6 @@ import {
   Terminal, 
   Globe, 
   Shield, 
-  Activity, 
   ArrowUpRight,
   Cpu,
   Mail,
@@ -24,7 +23,6 @@ import {
   ActivitySquare
 } from "lucide-react";
 import { MagneticButton } from "../ui/MagneticButton";
-import { motion } from "framer-motion";
 
 const footerLinks = {
   primary: [
@@ -59,7 +57,7 @@ export const Footer = () => {
           {/* Brand Column */}
           <div className="col-span-12 lg:col-span-4 space-y-8">
             <div>
-              <h2 className="text-2xl font-serif font-light tracking-[0.2em] text-primary uppercase mb-2">
+              <h2 className="text-2xl font-brand font-bold tracking-[0.2em] text-primary uppercase mb-2">
                 Divine&apos;s Destinations
               </h2>
               <p className="font-technical text-[8px] text-tertiary font-bold tracking-[0.4em] uppercase">
@@ -67,7 +65,7 @@ export const Footer = () => {
               </p>
             </div>
             
-            <p className="font-serif text-lg text-primary/60 italic leading-relaxed max-w-sm">
+            <p className="font-body text-lg text-primary/60 italic leading-relaxed max-w-sm">
               A technical archive of human exploration. Documenting the world with precision and narrative depth.
             </p>
 
@@ -87,7 +85,7 @@ export const Footer = () => {
           {/* Links Matrix */}
           <div className="col-span-12 lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-12">
             <div>
-              <h4 className="font-technical text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
+              <h4 className="font-accent text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
                 <Navigation size={10} className="text-tertiary" />
                 Discovery Hub
               </h4>
@@ -96,7 +94,7 @@ export const Footer = () => {
                   <li key={link.label}>
                     <Link 
                       href={link.href} 
-                      className="font-serif text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
+                      className="font-body text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
                     >
                       <link.icon size={14} className="opacity-40 group-hover:opacity-100 group-hover:text-tertiary transition-colors duration-300" />
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.label}</span>
@@ -108,7 +106,7 @@ export const Footer = () => {
             </div>
 
             <div>
-              <h4 className="font-technical text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
+              <h4 className="font-accent text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
                 <Cpu size={10} className="text-tertiary" />
                 Specialized
               </h4>
@@ -117,7 +115,7 @@ export const Footer = () => {
                   <li key={link.label}>
                     <Link 
                       href={link.href} 
-                      className="font-serif text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
+                      className="font-body text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
                     >
                       <link.icon size={14} className="opacity-40 group-hover:opacity-100 group-hover:text-tertiary transition-colors duration-300" />
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.label}</span>
@@ -129,7 +127,7 @@ export const Footer = () => {
             </div>
 
             <div className="col-span-2 md:col-span-1">
-              <h4 className="font-technical text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
+              <h4 className="font-accent text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
                 <Shield size={10} className="text-tertiary" />
                 Compliance
               </h4>
@@ -138,7 +136,7 @@ export const Footer = () => {
                   <li key={link.label}>
                     <Link 
                       href={link.href} 
-                      className="font-serif text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
+                      className="font-body text-primary/60 hover:text-primary transition-all duration-300 flex items-center gap-3 group"
                     >
                       <link.icon size={14} className="opacity-40 group-hover:opacity-100 group-hover:text-tertiary transition-colors duration-300" />
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.label}</span>

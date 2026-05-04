@@ -32,7 +32,7 @@ export default function ContactPage() {
     }
   };
 
-  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 p-4 font-serif text-lg text-primary focus:outline-none focus:border-tertiary transition-all placeholder:text-primary/20";
+  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 p-4 font-body text-lg text-primary focus:outline-none focus:border-tertiary transition-all placeholder:text-primary/20";
   const labelCls = "block font-technical text-[10px] uppercase font-bold text-primary/40 mb-2 tracking-widest";
 
   return (
@@ -56,10 +56,10 @@ export default function ContactPage() {
                   Communication Matrix
                 </p>
               </motion.div>
-              <h1 className="font-serif text-6xl md:text-7xl text-primary leading-[0.9] mb-8">
+              <h1 className="font-heading text-6xl md:text-7xl text-primary leading-[0.9] mb-8">
                 Establish <br /> Transmission
               </h1>
-              <p className="font-serif text-xl text-primary/60 italic leading-relaxed max-w-md">
+              <p className="font-body text-xl text-primary/60 italic leading-relaxed max-w-md">
                 For collaborations, expedition inquiries, or technical consultations, please initiate an encrypted transmission.
               </p>
             </div>
@@ -175,8 +175,8 @@ export default function ContactPage() {
                     <CheckCircle size={48} className="text-green-500" />
                   </div>
                   <div>
-                    <h2 className="font-serif text-4xl text-primary mb-4 tracking-tight">Transmission Complete</h2>
-                    <p className="font-serif text-lg text-primary/60 italic max-w-sm mx-auto">
+                    <h2 className="font-heading text-primary mb-4 tracking-tight">Transmission Complete</h2>
+                    <p className="font-body text-lg text-primary/60 italic max-w-sm mx-auto">
                       Your inquiry has been successfully encrypted and added to the mission queue.
                     </p>
                   </div>

@@ -45,10 +45,10 @@ export default function TermsPage() {
             <Key size={16} className="text-tertiary" />
             <span className="font-technical text-[10px] text-tertiary uppercase tracking-[0.4em] font-bold">Protocol_Ref: TRM-002</span>
           </div>
-          <h1 className="font-serif text-5xl md:text-7xl text-primary mb-8 leading-none">
+          <h1 className="font-heading text-5xl md:text-7xl text-primary mb-8 leading-none">
             Terms of Use.
           </h1>
-          <p className="font-serif text-xl text-primary/60 italic leading-relaxed">
+          <p className="font-body text-xl text-primary/60 italic leading-relaxed">
             Mission parameters and operational liabilities. Engaging with the Divine Destinations network constitutes full acknowledgement of these operational directives.
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function TermsPage() {
             <h2 className="font-technical text-sm uppercase tracking-widest font-bold text-primary mb-8 flex items-center gap-4">
               <Key size={16} className="text-tertiary" /> Network Access
             </h2>
-            <div className="space-y-6 font-serif text-lg text-primary/70 leading-relaxed">
+            <div className="space-y-6 font-body text-lg text-primary/70 leading-relaxed">
               <p>Access to the central network and Mission Control dashboard is granted on a strict authorization basis. Any attempts to bypass security nodes, inject malicious telemetry, or extract unauthorized intel will result in immediate termination of the session and IP blacklisting.</p>
               <p>You are responsible for maintaining the absolute secrecy of your operational credentials.</p>
             </div>
@@ -92,7 +92,7 @@ export default function TermsPage() {
             <h2 className="font-technical text-sm uppercase tracking-widest font-bold text-primary mb-8 flex items-center gap-4">
               <AlertTriangle size={16} className="text-tertiary" /> Operational Liabilities
             </h2>
-            <div className="space-y-6 font-serif text-lg text-primary/70 leading-relaxed">
+            <div className="space-y-6 font-body text-lg text-primary/70 leading-relaxed">
               <p>The coordinates, gear specifications, and logistical routes documented within this archive are provided as historical records, not instructional directives. We assume zero liability for physical injury, equipment failure, or adverse atmospheric conditions encountered if you attempt to replicate these expeditions.</p>
               <div className="p-6 border-l-2 border-tertiary bg-tertiary/[0.02] text-sm">
                  <strong className="font-technical tracking-widest uppercase mb-2 block">Warning</strong>
@@ -105,7 +105,7 @@ export default function TermsPage() {
             <h2 className="font-technical text-sm uppercase tracking-widest font-bold text-primary mb-8 flex items-center gap-4">
               <Camera size={16} className="text-tertiary" /> Visual Assets & Copyright
             </h2>
-            <div className="space-y-6 font-serif text-lg text-primary/70 leading-relaxed">
+            <div className="space-y-6 font-body text-lg text-primary/70 leading-relaxed">
               <p>All photographic records, architectural maps, and written chronicles hosted on this server are the exclusive intellectual property of Divine Destinations unless otherwise stated. Unauthorized extraction, duplication, or deployment of these assets in external theaters is strictly prohibited.</p>
             </div>
           </div>

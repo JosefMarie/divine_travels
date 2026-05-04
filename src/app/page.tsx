@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowRight, MoveUpRight, MapPin, Home as HomeIcon, Sparkles, Compass, Loader2 } from "lucide-react";
+import { ArrowRight, MoveUpRight, MapPin, Home as HomeIcon, Sparkles, Compass } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { subscribeToPosts } from "@/lib/db/posts";
@@ -47,11 +47,11 @@ export default function Home() {
               </p>
             </div>
             
-            <h1 className="font-serif text-6xl md:text-8xl text-primary mb-6 leading-[0.9] tracking-tight">
+            <h1 className="font-brand text-6xl md:text-8xl text-primary mb-6 leading-[0.9] tracking-tight">
               Divine&apos;s <br /> Destinations
             </h1>
             
-            <p className="font-serif text-xl md:text-2xl text-primary/70 mb-12 max-w-xl italic">
+            <p className="font-body text-xl md:text-2xl text-primary/70 mb-12 max-w-xl italic">
               Sharing travel with others through a lens of technical precision and narrative luxury.
             </p>
             
@@ -92,7 +92,7 @@ export default function Home() {
                   </div>
                   <div className="text-right">
                     <p className="font-technical text-[8px] uppercase opacity-50 mb-1 tracking-tighter">Altitude</p>
-                    <p className="font-serif text-2xl leading-none text-tertiary">12.4m</p>
+                    <p className="font-technical text-2xl leading-none text-tertiary">12.4m</p>
                   </div>
                 </div>
               </div>
@@ -116,7 +116,7 @@ export default function Home() {
           <div className="flex justify-between items-end mb-16">
             <div>
               <p className="font-technical text-[10px] text-primary/50 mb-2 tracking-[0.3em] font-bold uppercase">01 — COLLECTION</p>
-              <h2 className="font-serif text-4xl md:text-5xl text-primary">Recent Stories</h2>
+              <h2 className="font-heading text-4xl md:text-5xl text-primary">Recent Stories</h2>
             </div>
             <Link href="/blog">
               <MagneticButton className="hidden md:flex items-center gap-4 text-primary/60 hover:text-tertiary transition-colors">
@@ -162,8 +162,8 @@ export default function Home() {
                           <span className="font-technical text-[10px] text-primary/40 font-bold tracking-widest">{story.category.toUpperCase()}</span>
                           <Icon size={16} className="text-primary/20 group-hover:text-tertiary transition-colors" />
                         </div>
-                        <h3 className="font-serif text-2xl text-primary mb-4 group-hover:text-tertiary transition-colors">{story.title}</h3>
-                        <p className="font-serif text-sm text-primary/60 line-clamp-2 leading-relaxed italic mb-auto">{story.excerpt}</p>
+                        <h3 className="font-heading text-2xl text-primary mb-4 group-hover:text-tertiary transition-colors">{story.title}</h3>
+                        <p className="font-body text-sm text-primary/60 line-clamp-2 leading-relaxed italic mb-auto">{story.excerpt}</p>
                         <div className="mt-8 pt-6 border-t border-primary/5 flex items-center justify-between">
                           <div>
                             <span className="block font-technical text-[8px] uppercase opacity-40 mb-1 tracking-tighter">Coordinates</span>

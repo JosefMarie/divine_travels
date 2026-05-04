@@ -65,11 +65,11 @@ export default function AboutPage() {
               <p className="font-technical text-[10px] text-tertiary uppercase tracking-[0.3em] font-bold">The Protagonist</p>
             </div>
             
-            <h1 className="font-serif text-6xl md:text-8xl text-primary leading-[0.9] mb-8">
+            <h1 className="font-brand text-6xl md:text-8xl text-primary leading-[0.9] mb-8">
               Divine&apos;s <br /> Perspective.
             </h1>
             
-            <p className="font-serif text-lg text-primary/70 mb-12 italic leading-relaxed">
+            <p className="font-body text-lg text-primary/70 mb-12 italic leading-relaxed">
               Observing the world through a lens of technical precision and poetic silence. A journey defined not by distance, but by the density of the moments captured.
             </p>
 
@@ -125,8 +125,8 @@ export default function AboutPage() {
               viewport={{ margin: "-40% 0px -40% 0px" }}
               className={`transition-opacity duration-700 ${activePhase === 1 ? 'opacity-100' : 'opacity-40'}`}
             >
-              <h2 className="font-serif text-4xl text-primary mb-8">A dialogue between data and dreamscape.</h2>
-              <p className="font-serif text-lg text-primary/60 leading-relaxed italic">
+              <h2 className="font-heading text-primary mb-8">A dialogue between data and dreamscape.</h2>
+              <p className="font-body text-lg text-primary/60 leading-relaxed italic">
                 Divine began as an exercise in structural observation. In a world saturated with fleeting imagery, the goal was to create a sanctuary of precision. Every expedition is logged with the rigor of a flight manifest, yet experienced with the emotional depth of an editorial masterpiece.
               </p>
             </motion.div>
@@ -136,9 +136,9 @@ export default function AboutPage() {
               viewport={{ margin: "-40% 0px -40% 0px" }}
               className={`transition-opacity duration-700 ${activePhase === 2 ? 'opacity-100' : 'opacity-40'}`}
             >
-              <h2 className="font-serif text-4xl text-primary mb-8">The Evolution of Documentation.</h2>
+              <h2 className="font-heading text-primary mb-8">The Evolution of Documentation.</h2>
               <div className="border-l-4 border-tertiary/20 pl-8 py-2 mb-8">
-                <p className="font-serif text-xl text-primary/80 italic leading-relaxed">
+                <p className="font-body text-primary/80 italic leading-relaxed">
                   &quot;The technical data—the ISO settings, the coordinates, the barometric pressure—is not just metadata. It is the skeletal structure of a memory.&quot;
                 </p>
               </div>
@@ -149,8 +149,8 @@ export default function AboutPage() {
               viewport={{ margin: "-40% 0px -40% 0px" }}
               className={`transition-opacity duration-700 ${activePhase === 3 ? 'opacity-100' : 'opacity-40'}`}
             >
-              <h2 className="font-serif text-4xl text-primary mb-8">Current Operations.</h2>
-              <p className="font-serif text-lg text-primary/60 leading-relaxed italic">
+              <h2 className="font-heading text-primary mb-8">Current Operations.</h2>
+              <p className="font-body text-lg text-primary/60 leading-relaxed italic">
                 This narrative is built upon the pillars of intentional luxury. It is for the elite voyager who seeks the quietest corner of the busiest city, the sharpest focus in the softest light, and the technical truth behind every curated aesthetic. The operation has expanded from a singular perspective into a global archive.
               </p>
             </motion.div>
@@ -163,7 +163,7 @@ export default function AboutPage() {
       {/* Technical DNA Grid */}
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-b border-primary/5">
         <div className="flex justify-between items-end mb-12 border-b border-primary/5 pb-8">
-          <h2 className="font-serif text-3xl text-primary">Technical DNA</h2>
+          <h2 className="font-heading text-primary">Technical DNA</h2>
           <p className="font-technical text-[9px] text-tertiary font-bold tracking-widest uppercase">Metrics v.2.0.4</p>
         </div>
         
@@ -180,8 +180,8 @@ export default function AboutPage() {
                    </motion.div>
                    <p className="font-technical text-[8px] font-bold tracking-tighter opacity-50 uppercase group-hover:text-tertiary group-hover:opacity-100 transition-all duration-500">{m.label}</p>
                 </div>
-                <p className="font-serif text-2xl mb-2 group-hover:translate-x-1 transition-transform duration-500">{m.val}</p>
-                <p className="font-serif text-xs opacity-50 italic group-hover:opacity-80 transition-opacity duration-500">{m.desc}</p>
+                <p className="font-heading mb-2 group-hover:translate-x-1 transition-transform duration-500">{m.val}</p>
+                <p className="font-body text-xs opacity-50 italic group-hover:opacity-80 transition-opacity duration-500">{m.desc}</p>
              </div>
            ))}
            <div className="md:col-span-1 p-10 bg-neutral/50 border border-primary/5 flex flex-col justify-center relative group overflow-hidden cursor-pointer transition-all duration-500 technical-card hover:border-tertiary/20">
@@ -202,7 +202,7 @@ export default function AboutPage() {
       <section className="py-24 px-6 md:px-12 max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="font-technical text-[10px] text-tertiary font-bold tracking-[0.4em] uppercase mb-4">Intelligence Manifest</p>
-          <h2 className="font-serif text-5xl text-primary">Common Inquiries</h2>
+          <h2 className="font-heading text-primary">Common Inquiries</h2>
         </div>
 
         <div className="space-y-4">
@@ -216,7 +216,7 @@ export default function AboutPage() {
               <summary className="flex items-center justify-between p-8 cursor-pointer list-none">
                 <div className="flex items-center gap-8">
                   <span className="font-technical text-[9px] text-primary/30 font-bold uppercase">{item.ref}</span>
-                  <h4 className="font-serif text-2xl text-primary">{item.q}</h4>
+                  <h4 className="font-heading text-primary">{item.q}</h4>
                 </div>
                 <div className="relative w-4 h-4">
                   <div className="absolute top-1/2 left-0 w-full h-[1px] bg-primary group-open:rotate-180 transition-transform duration-500" />
@@ -225,7 +225,7 @@ export default function AboutPage() {
               </summary>
               <div className="px-8 pb-8 pt-0">
                 <div className="max-w-2xl ml-20">
-                  <p className="font-serif text-lg text-primary/60 leading-relaxed italic border-l-2 border-tertiary/20 pl-8">
+                  <p className="font-body text-lg text-primary/60 leading-relaxed italic border-l-2 border-tertiary/20 pl-8">
                     {item.a}
                   </p>
                 </div>

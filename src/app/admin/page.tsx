@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import Map, { Marker } from 'react-map-gl/mapbox';
+import Map, { Marker, MapRef } from 'react-map-gl/mapbox';
+import { Timestamp } from "firebase/firestore";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { subscribeToPosts, createPost, updatePost, deletePost } from '@/lib/db/posts';
 import { subscribeToDestinations, createDestination, updateDestination, deleteDestination } from '@/lib/db/destinations';
@@ -155,7 +156,7 @@ const MissionControlView = () => {
         <div className="flex justify-between items-start mb-12">
            <div>
              <span className="font-technical text-[10px] text-primary/40 uppercase font-bold tracking-widest">Site Traffic Summary</span>
-             <h3 className="font-serif text-3xl text-primary mt-2 italic">Volume Density</h3>
+             <h3 className="font-heading text-primary mt-2 italic">Volume Density</h3>
            </div>
            <div className="flex gap-4">
               <button 
@@ -290,7 +291,7 @@ const ContentVaultView = () => {
   const statusColor = (s: Post['status']) => s === 'live' ? 'text-green-600' : s === 'draft' ? 'text-primary/40' : 'text-primary/20';
   const statusDot = (s: Post['status']) => s === 'live' ? 'bg-green-600 animate-pulse' : 'bg-primary/20';
 
-  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-3 py-2 font-serif text-sm text-primary focus:outline-none focus:border-tertiary transition-colors";
+  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-3 py-2 font-body text-sm text-primary focus:outline-none focus:border-tertiary transition-colors";
   const labelCls = "block font-technical text-[8px] uppercase font-bold text-primary/40 mb-1";
 
   return (
@@ -377,7 +378,7 @@ const ContentVaultView = () => {
               className="bg-neutral technical-card p-10 max-w-sm w-full text-center"
             >
               <Trash2 size={24} className="text-tertiary mx-auto mb-4" />
-              <h3 className="font-serif text-2xl text-primary mb-2">Delete Entry?</h3>
+              <h3 className="font-heading text-primary mb-2">Delete Entry?</h3>
               <p className="font-technical text-[9px] text-primary/40 uppercase tracking-widest mb-8">This action is irreversible.</p>
               <div className="flex gap-4">
                 <button onClick={() => setConfirmDelete(null)} className="flex-1 border border-primary/10 py-3 font-technical text-[9px] uppercase font-bold text-primary hover:bg-primary/5 transition-colors">Cancel</button>
@@ -433,7 +434,7 @@ const ContentVaultView = () => {
                         {post.imageUrl && <Image src={post.imageUrl} alt={post.title} fill className="object-cover" />}
                       </div>
                       <div>
-                        <span className="font-serif text-sm block mb-1 text-primary group-hover:text-tertiary transition-colors">{post.title}</span>
+                        <span className="font-body text-sm block mb-1 text-primary group-hover:text-tertiary transition-colors">{post.title}</span>
                         <span className="font-technical text-[8px] text-primary/30 font-bold uppercase">{post.category}</span>
                       </div>
                     </div>
@@ -603,7 +604,7 @@ const DestinationsVaultView = () => {
   const statusColor = (s: DestinationStatus) => s === 'active' ? 'text-green-600' : s === 'visited' ? 'text-tertiary' : 'text-primary/20';
   const statusDot = (s: DestinationStatus) => s === 'active' ? 'bg-green-600 animate-pulse' : s === 'visited' ? 'bg-tertiary shadow-[0_0_8px_rgba(179,48,91,0.4)]' : 'bg-primary/20';
 
-  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-3 py-2 font-serif text-sm text-primary focus:outline-none focus:border-tertiary transition-colors";
+  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-3 py-2 font-body text-sm text-primary focus:outline-none focus:border-tertiary transition-colors";
   const labelCls = "block font-technical text-[8px] uppercase font-bold text-primary/40 mb-1";
 
   return (
@@ -678,7 +679,7 @@ const DestinationsVaultView = () => {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         <div className="flex justify-between items-end">
           <div>
-            <h2 className="font-serif text-4xl text-primary mb-2">Journey Registry</h2>
+            <h2 className="font-heading text-primary mb-2">Journey Registry</h2>
             <p className="font-technical text-[8px] text-primary/40 uppercase tracking-widest font-bold flex items-center gap-2">
               Global Mission Sectors // {destinations.length} Units Mapped
               {loading && <Loader2 size={10} className="animate-spin" />}
@@ -718,7 +719,7 @@ const DestinationsVaultView = () => {
                   >
                     <td className="p-6 opacity-30 group-hover:opacity-100 transition-opacity">{dest.id.slice(0, 8)}</td>
                     <td className="p-6">
-                      <span className="block text-xs font-serif mb-0.5">{dest.title}</span>
+                      <span className="block text-xs font-body mb-0.5">{dest.title}</span>
                       <span className="text-[7px] text-primary/40 uppercase font-technical">{dest.location}</span>
                     </td>
                     <td className="p-6">
@@ -817,7 +818,7 @@ const DestinationsVaultView = () => {
         <div className="fixed inset-0 z-[110] bg-neutral/80 backdrop-blur-sm flex items-center justify-center p-6">
           <div className="technical-card p-10 max-w-sm w-full bg-neutral shadow-2xl border-2 border-tertiary">
             <h4 className="font-technical text-[10px] text-tertiary font-bold uppercase tracking-[0.3em] mb-4">Purge Protocol</h4>
-            <p className="font-serif text-lg text-primary mb-8 leading-relaxed">Permanent deletion of mission sector data detected. Proceed?</p>
+            <p className="font-body text-lg text-primary mb-8 leading-relaxed">Permanent deletion of mission sector data detected. Proceed?</p>
             <div className="flex gap-4">
               <button onClick={() => handleDelete(confirmDelete)} className="flex-1 bg-tertiary text-neutral py-3 font-technical text-[9px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity">Confirm Purge</button>
               <button onClick={() => setConfirmDelete(null)} className="flex-1 border border-primary/20 text-primary/60 py-3 font-technical text-[9px] font-bold uppercase tracking-widest hover:bg-primary/[0.02]">Abort</button>
@@ -893,7 +894,7 @@ const CommunicationHubView = () => {
                     {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <h4 className={`font-serif text-lg transition-colors ${msg.status === 'unread' ? 'text-primary' : 'text-primary/40'}`}>{msg.name}</h4>
+                <h4 className={`font-heading text-lg transition-colors ${msg.status === 'unread' ? 'text-primary' : 'text-primary/40'}`}>{msg.name}</h4>
                 <p className="text-[10px] font-technical text-primary/60 truncate mt-1 uppercase tracking-widest font-bold">{msg.subject}</p>
               </div>
             ))
@@ -943,7 +944,7 @@ const CommunicationHubView = () => {
                       <span className="font-technical text-sm text-primary font-bold">{selectedMsg.name[0]}</span>
                     </div>
                     <div>
-                      <h3 className="font-serif text-3xl text-primary leading-none mb-1">{selectedMsg.name}</h3>
+                      <h3 className="font-heading text-3xl text-primary leading-none mb-1">{selectedMsg.name}</h3>
                       <p className="font-technical text-[8px] text-tertiary font-bold uppercase tracking-widest">{selectedMsg.email}</p>
                     </div>
                   </div>
@@ -952,7 +953,7 @@ const CommunicationHubView = () => {
                   </div>
                 </div>
 
-                <div className="space-y-6 font-serif text-lg leading-relaxed text-primary/80 selection:bg-tertiary selection:text-neutral">
+                <div className="space-y-6 font-body text-lg leading-relaxed text-primary/80 selection:bg-tertiary selection:text-neutral">
                   {selectedMsg.content.split('\n').map((para, i) => (
                     <p key={i}>{para}</p>
                   ))}
@@ -960,7 +961,7 @@ const CommunicationHubView = () => {
 
                 <div className="mt-20 pt-8 border-t border-primary/5">
                   <p className="font-technical text-[8px] text-primary/30 uppercase font-bold tracking-widest">
-                    Transmission ID: {selectedMsg.id} // Vector: {selectedMsg.subject} // Timestamp: {new Date(selectedMsg.createdAt).toLocaleString()}
+                    Transmission ID: {selectedMsg.id} {"//"} Vector: {selectedMsg.subject} {"//"} Timestamp: {new Date(selectedMsg.createdAt).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -990,7 +991,7 @@ function parseCoordinates(raw?: string): { lat: number; lon: number } | null {
 }
 
 const SystemAnalyticsView = () => {
-  const mapRef = React.useRef<any>(null);
+  const mapRef = React.useRef<MapRef>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -1057,7 +1058,7 @@ const SystemAnalyticsView = () => {
     <div className="grid grid-cols-12 gap-8">
       {/* Category Chart */}
       <div className="col-span-12 lg:col-span-5 technical-card bg-neutral/50 p-10 border border-primary/5">
-        <h3 className="font-serif text-2xl text-primary mb-2">Mission Diversity</h3>
+        <h3 className="font-heading text-2xl text-primary mb-2">Mission Diversity</h3>
         <p className="font-technical text-[8px] text-primary/40 uppercase font-bold mb-10 tracking-widest">Archive Categorization breakdown</p>
         
         <div className="space-y-8">
@@ -1098,7 +1099,7 @@ const SystemAnalyticsView = () => {
 
       {/* Mini Globe Map */}
       <div className="col-span-12 lg:col-span-7 technical-card bg-neutral/50 p-10 min-h-[500px] relative overflow-hidden group border border-primary/5">
-        <h3 className="font-serif text-2xl text-primary mb-2">Live Coordinate Registry</h3>
+        <h3 className="font-heading text-2xl text-primary mb-2">Live Coordinate Registry</h3>
         <p className="font-technical text-[8px] text-primary/40 uppercase font-bold mb-6 tracking-widest">
           Active geographic Plotting // {liveMarkers.length} Nodes Synchronized
         </p>
@@ -1167,7 +1168,7 @@ const SystemSettingsView = () => {
     setTimeout(() => setSaving(false), 1500);
   };
 
-  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-4 py-3 font-serif text-sm text-primary focus:outline-none focus:border-tertiary transition-all";
+  const inputCls = "w-full bg-primary/[0.03] border border-primary/10 px-4 py-3 font-body text-sm text-primary focus:outline-none focus:border-tertiary transition-all";
   const labelCls = "block font-technical text-[8px] uppercase font-bold text-primary/40 mb-2 tracking-widest";
 
   return (
@@ -1251,7 +1252,7 @@ const SystemSettingsView = () => {
           <div className={`p-8 border-2 transition-all ${settings.maintenance ? 'border-tertiary bg-tertiary/5' : 'border-primary/5 bg-neutral/50'}`}>
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h4 className={`font-serif text-2xl ${settings.maintenance ? 'text-tertiary' : 'text-primary'}`}>Maintenance Mode</h4>
+                <h4 className={`font-heading text-2xl ${settings.maintenance ? 'text-tertiary' : 'text-primary'}`}>Maintenance Mode</h4>
                 <p className="font-technical text-[8px] uppercase text-primary/40 mt-1">Lock Public Access Registry</p>
               </div>
               <button 
@@ -1261,13 +1262,13 @@ const SystemSettingsView = () => {
                 {settings.maintenance ? "ACTIVE" : "INACTIVE"}
               </button>
             </div>
-            <p className="font-serif text-sm italic text-primary/60">When active, all public routes will redirect to a secure standby screen.</p>
+            <p className="font-body text-sm italic text-primary/60">When active, all public routes will redirect to a secure standby screen.</p>
           </div>
 
           <div className="p-8 border border-primary/5 bg-neutral/50">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h4 className="font-serif text-2xl text-primary">Inquiry Gateway</h4>
+                <h4 className="font-heading text-2xl text-primary">Inquiry Gateway</h4>
                 <p className="font-technical text-[8px] uppercase text-primary/40 mt-1">Contact Protocol Availability</p>
               </div>
               <button 
@@ -1277,7 +1278,7 @@ const SystemSettingsView = () => {
                 {settings.publicTransmissions ? "OPEN" : "LOCKED"}
               </button>
             </div>
-            <p className="font-serif text-sm italic text-primary/60">Toggle the visibility of the encrypted transmission matrix for visitors.</p>
+            <p className="font-body text-sm italic text-primary/60">Toggle the visibility of the encrypted transmission matrix for visitors.</p>
           </div>
         </div>
       </section>
@@ -1325,9 +1326,9 @@ const SecurityView = () => {
     setTimeout(() => setSecurityState(prev => ({ ...prev, keyRotationLoading: false })), 2000);
   };
 
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return "SYNCING...";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const formatDate = (val: Timestamp | number | null) => {
+    if (!val) return "SYNCING...";
+    const date = typeof val === 'number' ? new Date(val) : val.toDate();
     return date.toISOString().replace('T', ' ').split('.')[0];
   };
 
@@ -1340,7 +1341,7 @@ const SecurityView = () => {
           <Shield size={64} className="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity group-hover:scale-110 duration-500 text-tertiary" />
           <p className="font-technical text-[8px] uppercase tracking-widest text-tertiary font-bold mb-4">Shield Protocol</p>
           <div className="flex items-baseline gap-4">
-            <h4 className="font-serif text-5xl text-primary">Level {securityState.shieldLevel}</h4>
+            <h4 className="font-heading text-5xl text-primary">Level {securityState.shieldLevel}</h4>
             <span className="font-technical text-[10px] text-green-500 animate-pulse">OPTIMAL</span>
           </div>
           <p className="font-technical text-[9px] uppercase text-primary/40 mt-4">Active Threat Mitigation</p>
@@ -1348,7 +1349,7 @@ const SecurityView = () => {
 
         <div className="p-8 technical-card bg-neutral/50 group border border-primary/5">
           <p className="font-technical text-[8px] uppercase tracking-widest text-primary/40 font-bold mb-4 group-hover:text-primary transition-colors">Encryption Matrix</p>
-          <h4 className="font-serif text-4xl text-primary">AES-256-GCM</h4>
+          <h4 className="font-heading text-primary">AES-256-GCM</h4>
           <div className="mt-4 flex items-center gap-3">
              <div className="flex-1 h-1 bg-primary/5 rounded-full overflow-hidden">
                 <motion.div animate={{ width: "100%" }} className="h-full bg-tertiary shadow-[0_0_8px_#b3305b]" />
@@ -1359,7 +1360,7 @@ const SecurityView = () => {
 
         <div className="p-8 technical-card bg-neutral/50 group border border-primary/5">
           <p className="font-technical text-[8px] uppercase tracking-widest text-primary/40 font-bold mb-4 group-hover:text-primary transition-colors">Node Registry</p>
-          <h4 className="font-serif text-4xl text-primary">Secure</h4>
+          <h4 className="font-heading text-primary">Secure</h4>
           <p className="font-technical text-[10px] uppercase text-green-600 flex items-center gap-2 mt-4">
             <Activity size={12} />
             Live Monitoring Active
@@ -1373,7 +1374,7 @@ const SecurityView = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
            <div className="flex justify-between items-center p-8 border border-primary/5 technical-card bg-neutral/50">
              <div>
-               <h5 className="font-serif text-xl text-primary mb-1">Biometric Multi-Factor</h5>
+               <h5 className="font-heading text-xl text-primary mb-1">Biometric Multi-Factor</h5>
                <p className="font-technical text-[9px] uppercase text-primary/30">Mandatory hardware key validation</p>
              </div>
              <button 
@@ -1386,7 +1387,7 @@ const SecurityView = () => {
 
            <div className="flex justify-between items-center p-8 border border-primary/5 technical-card bg-neutral/50">
              <div>
-               <h5 className="font-serif text-xl text-primary mb-1">Node Lockdown (Geofence)</h5>
+               <h5 className="font-heading text-xl text-primary mb-1">Node Lockdown (Geofence)</h5>
                <p className="font-technical text-[9px] uppercase text-primary/30">Restrict access to verified coordinates</p>
              </div>
              <button 
@@ -1406,7 +1407,7 @@ const SecurityView = () => {
                <Lock size={32} />
             </div>
             <div>
-               <h4 className="font-serif text-2xl text-primary">Master Key Rotation</h4>
+               <h4 className="font-heading text-2xl text-primary">Master Key Rotation</h4>
                <p className="font-technical text-[9px] uppercase text-primary/40 mt-1">Last rotated: 2026-04-28 // Next cycle in 12 days</p>
             </div>
          </div>
@@ -1483,7 +1484,7 @@ const AuthPortal = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (err: any) {
+    } catch (err) {
       setError("Authorization Failed: Invalid Credentials or Unauthorized Access.");
     } finally {
       setLoading(false);
@@ -1502,7 +1503,7 @@ const AuthPortal = () => {
       >
         <div className="mb-12 text-center">
           <Link href="/" className="group inline-block">
-            <h1 className="font-serif text-4xl text-primary mb-2 tracking-[0.1em] group-hover:text-tertiary transition-colors">Divine Registry</h1>
+            <h1 className="font-brand font-bold text-4xl md:text-5xl text-primary mb-2 tracking-[0.1em] group-hover:text-tertiary transition-colors">Divine&apos;s Destination</h1>
             <p className="font-technical text-[8px] text-tertiary font-bold uppercase tracking-[0.4em] group-hover:tracking-[0.6em] transition-all">Restricted Access Protocol // Login Only</p>
           </Link>
         </div>
@@ -1587,7 +1588,8 @@ export default function AdminPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -1620,7 +1622,7 @@ export default function AdminPage() {
       <aside className="fixed left-0 h-screen w-64 border-r border-primary/5 bg-neutral/80 backdrop-blur-2xl flex flex-col py-8 px-4 z-50">
         <div className="mb-12 px-4 flex justify-between items-start">
           <div>
-            <h1 className="text-xl font-serif font-light tracking-[0.2em] text-primary uppercase">Mission</h1>
+            <h1 className="text-xl font-brand font-light tracking-[0.2em] text-primary uppercase">Mission</h1>
             <p className="font-technical text-[8px] font-bold text-tertiary tracking-[0.4em] uppercase">Control</p>
           </div>
           <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
@@ -1691,7 +1693,7 @@ export default function AdminPage() {
               <span className="w-2 h-2 bg-tertiary rounded-full animate-pulse"></span>
               Live System Pulse // Unit-04
             </p>
-            <h2 className="font-serif text-5xl text-primary mb-4">
+            <h2 className="font-heading">
               {activeTab === 'control' && "Mission Control"}
               {activeTab === 'vault' && "Content Vault"}
               {activeTab === 'destinations' && "Journey Registry"}
@@ -1700,7 +1702,7 @@ export default function AdminPage() {
               {activeTab === 'settings' && "System Settings"}
               {activeTab === 'security' && "Security Hub"}
             </h2>
-            <p className="font-serif text-lg italic text-primary/60 leading-relaxed">
+            <p className="font-body">
               {activeTab === 'control' && "Overseeing global operations and real-time mission synchronization."}
               {activeTab === 'vault' && "Specialized environment for the management of cinematic storytelling artifacts."}
               {activeTab === 'destinations' && "Administrative oversight of global mission sectors and geographic registries."}

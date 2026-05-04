@@ -48,10 +48,10 @@ export default function BlogPage() {
           <p className="font-technical text-[10px] text-tertiary font-bold tracking-[0.4em] uppercase mb-4">
             Cinematic Chronicles
           </p>
-          <h1 className="font-serif text-6xl md:text-8xl text-primary mb-8">
+          <h1 className="font-heading text-6xl md:text-8xl text-primary mb-8">
             The Blog.
           </h1>
-          <p className="font-serif text-xl text-primary/60 italic leading-relaxed">
+          <p className="font-body text-xl text-primary/60 italic leading-relaxed">
             In-depth narratives from the edge of the world. Each entry is a
             meticulous study of light, location, and the technical journey
             behind the capture.
@@ -101,10 +101,10 @@ export default function BlogPage() {
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-3xl text-primary mb-4 group-hover:text-tertiary transition-colors">
+                  <h3 className="font-heading text-primary mb-4 group-hover:text-tertiary transition-colors">
                     {post.title}
                   </h3>
-                  <p className="font-serif text-base text-primary/60 italic mb-8 flex-1 leading-relaxed">
+                  <p className="font-body text-primary/60 italic mb-8 flex-1 leading-relaxed">
                     {post.excerpt}
                   </p>
 

@@ -70,8 +70,8 @@ export default function GearPage() {
         </div>
         
         <div className="text-center max-w-4xl">
-          <h1 className="font-serif text-7xl md:text-9xl text-primary mb-12">The Gear Manifest.</h1>
-          <p className="font-serif text-xl text-primary/60 max-w-2xl mx-auto italic leading-relaxed">
+          <h1 className="font-heading text-7xl md:text-9xl text-primary mb-12">The Gear Manifest.</h1>
+          <p className="font-body text-xl text-primary/60 max-w-2xl mx-auto italic leading-relaxed">
             Precision tools for the global nomad. A curated inventory of hardware selected for reliability, performance, and aesthetic integrity across varying operational theaters.
           </p>
           <div className="mt-16">
@@ -123,7 +123,7 @@ export default function GearPage() {
                 
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <h3 className="font-serif text-2xl text-primary">{item.name}</h3>
+                    <h3 className="font-heading text-primary">{item.name}</h3>
                     <span className="font-technical text-[9px] text-primary/30 font-bold">{item.ref}</span>
                   </div>
                   
@@ -160,11 +160,11 @@ export default function GearPage() {
           <div className="space-y-12">
             <div>
               <p className="font-technical text-[10px] text-tertiary font-bold tracking-[0.4em] uppercase mb-4">Author&apos;s Choice</p>
-              <h2 className="font-serif text-6xl md:text-7xl border-b border-neutral/10 pb-8">The Hinderer XM-18 3.5&quot;</h2>
+              <h2 className="font-heading border-b border-neutral/10 pb-8">The Hinderer XM-18 3.5&quot;</h2>
             </div>
             
             <div className="space-y-8">
-              <p className="font-serif text-lg italic text-neutral/60 leading-relaxed">
+              <p className="font-body italic text-neutral/60 leading-relaxed">
                 Essential operational hardware. Precision machined in the USA, this tool represents the pinnacle of reliability for the modern explorer. Every component is engineered for extreme tolerances.
               </p>
               

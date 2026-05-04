@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ChevronDown, Activity, Shield, Settings, Camera, UtensilsCrossed } from "lucide-react";
+import { User, ChevronDown, Shield, Settings, Camera, UtensilsCrossed, Navigation } from "lucide-react";
 import { MagneticButton } from "../ui/MagneticButton";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -28,11 +28,11 @@ export const Navbar = () => {
 
   return (
     <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-6 glass-panel border-b border-primary/5">
-      <Link href="/" className="text-xl font-serif font-light tracking-[0.2em] text-primary uppercase">
+      <Link href="/" className="text-xl font-brand font-bold tracking-[0.2em] text-primary uppercase">
         Divine&apos;s Destinations
       </Link>
       
-      <div className="hidden md:flex items-center gap-4 font-technical text-[10px] tracking-widest uppercase font-bold">
+      <div className="hidden md:flex items-center gap-4 font-body text-[10px] tracking-widest uppercase font-bold">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
@@ -87,12 +87,16 @@ export const Navbar = () => {
                 transition={{ duration: 0.2 }}
                 className="absolute top-full left-0 mt-4 p-6 glass-panel border border-primary/10 min-w-[240px] shadow-2xl backdrop-blur-2xl"
               >
+                <h4 className="font-accent text-[10px] text-primary/30 uppercase font-bold tracking-widest mb-8 flex items-center gap-2">
+                  <Navigation size={10} className="text-tertiary" />
+                  Discovery Hub
+                </h4>
                 <div className="flex flex-col gap-6">
                   <Link href="/gear" className="flex items-center gap-4 group">
                     <Camera size={14} className="text-primary/60" />
                     <div className="flex flex-col">
                       <span className="text-primary group-hover:text-tertiary transition-colors">Gear Manifest</span>
-                      <span className="text-[7px] opacity-40 lowercase">Hardware Inventory</span>
+                      <span className="text-[7px] opacity-40 lowercase font-technical">Hardware Inventory</span>
                     </div>
                   </Link>
 
@@ -100,7 +104,7 @@ export const Navbar = () => {
                     <UtensilsCrossed size={14} className="text-primary/60" />
                     <div className="flex flex-col">
                       <span className="text-primary group-hover:text-tertiary transition-colors">Gastronomy</span>
-                      <span className="text-[7px] opacity-40 lowercase">Culinary Archive</span>
+                      <span className="text-[7px] opacity-40 lowercase font-technical">Culinary Archive</span>
                     </div>
                   </Link>
                   
@@ -108,7 +112,7 @@ export const Navbar = () => {
                     <Settings size={14} className="text-primary/60" />
                     <div className="flex flex-col">
                       <span className="text-primary group-hover:text-tertiary transition-colors">Logistics</span>
-                      <span className="text-[7px] opacity-40 lowercase">Remote Operations</span>
+                      <span className="text-[7px] opacity-40 lowercase font-technical">Remote Operations</span>
                     </div>
                   </Link>
                   
@@ -116,7 +120,7 @@ export const Navbar = () => {
                     <Shield size={14} className="text-primary/60" />
                     <div className="flex flex-col">
                       <span className="text-primary group-hover:text-tertiary transition-colors">Intelligence FAQ</span>
-                      <span className="text-[7px] opacity-40 lowercase">Knowledge Base</span>
+                      <span className="text-[7px] opacity-40 lowercase font-technical">Knowledge Base</span>
                     </div>
                   </Link>
                 </div>

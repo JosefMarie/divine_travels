@@ -53,7 +53,7 @@ export default function LogisticsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="font-serif text-6xl md:text-8xl text-primary mb-12"
+            className="font-heading text-6xl md:text-8xl text-primary mb-12"
           >
             Logistics <br /> Protocol.
           </motion.h1>
@@ -62,7 +62,7 @@ export default function LogisticsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="font-serif text-xl text-primary/60 max-w-xl italic leading-relaxed mb-16"
+            className="font-body text-xl text-primary/60 max-w-xl italic leading-relaxed mb-16"
           >
             Distilling the chaos of global movement into a curated series of high-definition, high-productivity moments. Precision-engineered for the modern nomad.
           </motion.p>
@@ -93,8 +93,8 @@ export default function LogisticsPage() {
       <section className="py-32 px-6 md:px-12 lg:px-24">
         <div className="flex justify-between items-end mb-24 border-b border-primary/5 pb-8">
           <div>
-            <h2 className="font-serif text-4xl text-primary mb-4">Travel Resources</h2>
-            <p className="font-serif text-lg text-primary/40 italic">Precision-engineered tools for the modern nomad.</p>
+            <h2 className="font-heading text-primary mb-4">Travel Resources</h2>
+            <p className="font-body text-primary/40 italic">Precision-engineered tools for the modern nomad.</p>
           </div>
           <p className="font-technical text-[10px] text-tertiary font-bold tracking-widest uppercase cursor-pointer hover:underline">Access Core API</p>
         </div>
@@ -120,7 +120,7 @@ export default function LogisticsPage() {
                     </motion.div>
                     <span className="font-technical text-[8px] bg-primary text-neutral px-2 py-0.5 font-bold uppercase group-hover:bg-tertiary transition-colors duration-500">Active</span>
                  </div>
-                 <h3 className="font-serif text-2xl text-primary mb-4 group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
+                 <h3 className="font-heading text-primary mb-4 group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
                  <p className="font-serif text-sm text-primary/60 italic mb-12 group-hover:text-primary transition-colors duration-500">{item.desc}</p>
                  <div className="pt-6 border-t border-primary/5 flex justify-between items-center font-technical text-[9px] font-bold uppercase">
                     <span className="text-primary/30 group-hover:text-primary transition-colors duration-500">Metric</span>
@@ -140,8 +140,8 @@ export default function LogisticsPage() {
           <div className="col-span-12 lg:col-span-4">
              <div className="sticky top-40">
                 <span className="font-technical text-[10px] text-tertiary uppercase tracking-[0.4em] font-bold mb-6 block">Workspace Dashboard</span>
-                <h2 className="font-serif text-5xl mb-8">Remote Infrastructure</h2>
-                <p className="font-serif text-lg text-neutral/60 italic leading-relaxed mb-12">
+                <h2 className="font-heading mb-8">Remote Infrastructure</h2>
+                <p className="font-body text-neutral/60 italic leading-relaxed mb-12">
                    Deployment protocols for maintaining high-bandwidth productivity in any environment, from alpine peaks to desert dunes.
                 </p>
                 <div className="space-y-4">
@@ -160,7 +160,7 @@ export default function LogisticsPage() {
           <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
              <div className="p-10 border border-neutral/10 bg-neutral/[0.02] flex flex-col justify-between group">
                 <div>
-                   <h4 className="font-serif text-3xl mb-4">Connectivity Hardware</h4>
+                   <h4 className="font-heading mb-4">Connectivity Hardware</h4>
                    <p className="font-serif text-sm text-neutral/40 italic">Satellite arrays and hardware VPN protocols for the elite traveler.</p>
                 </div>
                 <div className="mt-12 h-64 relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 border border-neutral/5">
@@ -175,7 +175,7 @@ export default function LogisticsPage() {
 
              <div className="p-10 border border-neutral/10 bg-neutral/[0.02] flex flex-col justify-between">
                 <div>
-                   <h4 className="font-serif text-3xl mb-4">Work Protocols</h4>
+                   <h4 className="font-heading mb-4">Work Protocols</h4>
                    <p className="font-serif text-sm text-neutral/40 italic">Standard operating procedures for asynchronous deep-work sessions.</p>
                 </div>
                 <div className="mt-12 space-y-6">
@@ -195,7 +195,7 @@ export default function LogisticsPage() {
              <div className="p-10 border border-neutral/10 bg-neutral/[0.02] md:col-span-2">
                 <div className="flex flex-col md:flex-row gap-12 items-center">
                    <div className="flex-1">
-                      <h4 className="font-serif text-3xl mb-4">Timezone Management</h4>
+                      <h4 className="font-heading mb-4">Timezone Management</h4>
                       <p className="font-serif text-sm text-neutral/40 italic">Circadian-aligned scheduling algorithms that synchronize with global market hours.</p>
                    </div>
                    <div className="grid grid-cols-2 gap-4 w-full md:w-fit">

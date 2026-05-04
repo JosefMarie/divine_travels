@@ -35,7 +35,7 @@ export default function StatusPage() {
               <ActivitySquare size={16} className="text-green-600" />
               <span className="font-technical text-[10px] text-green-600 uppercase tracking-[0.4em] font-bold">All Systems Nominal</span>
             </div>
-            <h1 className="font-serif text-5xl md:text-7xl text-primary mb-4 leading-none">
+            <h1 className="font-heading text-5xl md:text-7xl text-primary mb-4 leading-none">
               System Status.
             </h1>
             <p className="font-technical text-xs text-primary/40 uppercase tracking-widest font-bold">
@@ -111,7 +111,7 @@ export default function StatusPage() {
             <CheckCircle2 size={20} className="text-green-600 mt-1" />
             <div>
               <p className="font-technical text-sm font-bold text-primary mb-2">No incidents reported.</p>
-              <p className="font-serif text-sm text-primary/60 italic">The network is currently operating at maximum efficiency. All nodes are reporting stable telemetry.</p>
+              <p className="font-body text-sm text-primary/60 italic">The network is currently operating at maximum efficiency. All nodes are reporting stable telemetry.</p>
               <p className="font-technical text-[9px] uppercase tracking-widest text-primary/40 mt-4">Updated: {mounted ? new Date().toISOString().split('T')[0] : "----"}</p>
             </div>
           </div>

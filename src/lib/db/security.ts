@@ -5,13 +5,14 @@ import {
   onSnapshot, 
   addDoc, 
   serverTimestamp,
-  limit 
+  limit,
+  Timestamp
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
 export interface SecurityLog {
   id: string;
-  timestamp: any;
+  timestamp: Timestamp;
   nodePath: string;
   location: string;
   status: 'AUTHORIZED' | 'DENIED' | 'LOCKED';

@@ -94,11 +94,11 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
           </span>
         </div>
 
-        <h1 className="font-serif text-5xl md:text-7xl text-primary mb-8 leading-tight">
+        <h1 className="font-heading text-primary mb-8 leading-tight">
           {post.title}
         </h1>
 
-        <p className="font-serif text-xl text-primary/60 italic leading-relaxed mb-12">
+        <p className="font-body text-primary/60 italic leading-relaxed mb-12">
           {post.excerpt}
         </p>
 
@@ -138,7 +138,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
 
       {/* Article Body */}
       <article className="px-6 md:px-12 max-w-3xl mx-auto pb-32">
-        <div className="font-serif text-lg text-primary/80 leading-relaxed space-y-6 whitespace-pre-wrap">
+        <div className="font-body text-primary/80 leading-relaxed space-y-6 whitespace-pre-wrap">
           {post.content}
         </div>
       </article>
