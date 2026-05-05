@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowRight, MoveUpRight, MapPin, Home as HomeIcon, Sparkles, Compass } from "lucide-react";
+import { ArrowRight, MoveUpRight, MapPin, Home as HomeIcon, Sparkles, Compass, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { subscribeToPosts } from "@/lib/db/posts";
@@ -80,7 +80,7 @@ export default function Home() {
               {!userLocation && <div className="absolute inset-0 bg-primary/5 -translate-x-full animate-[scan_2s_linear_infinite]" />}
             </div>
             
-            <h1 className="font-brand text-6xl md:text-8xl text-primary mb-6 leading-[0.9] tracking-tight">
+            <h1 className="font-brand text-6xl md:text-8xl text-primary mb-6 leading-[0.9] tracking-tight font-black">
               {content?.heroTitle.split(' ').map((word, i) => (
                 <React.Fragment key={i}>
                   {word} {i === 0 && <br />}
@@ -178,7 +178,7 @@ export default function Home() {
                 <p className="font-technical text-xs text-primary/40 uppercase tracking-widest">Archive empty // Mission in progress</p>
               </div>
             ) : (
-              posts.map((story) => {
+              posts.slice(0, 3).map((story) => {
                 const Icon = getCategoryIcon(story.category);
                 return (
                   <Link href={`/blog/${story.id}`} key={story.id}>
@@ -214,6 +214,67 @@ export default function Home() {
                 );
               })
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Elite Recommendations Section */}
+      <section className="py-24 px-6 md:px-12 border-y border-primary/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+            <div className="max-w-xl">
+              <div className="flex items-center gap-4 mb-4">
+                <Award size={20} className="text-tertiary" />
+                <p className="font-technical text-[10px] text-tertiary tracking-[0.3em] font-bold uppercase">ELITE_MANIFEST // UNIT-01</p>
+              </div>
+              <h2 className="font-heading text-4xl md:text-5xl text-primary mb-4">Recommended Chronicles</h2>
+              <p className="font-body text-primary/60 italic leading-relaxed">
+                Mission chronicles prioritized by global operator validation and technical narrative impact.
+              </p>
+            </div>
+            <Link href="/blog">
+              <MagneticButton className="flex items-center gap-4 text-primary group">
+                <span className="font-technical text-[10px] uppercase tracking-widest font-bold">Discover More</span>
+                <div className="w-12 h-12 rounded-full border border-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-neutral transition-all">
+                  <ArrowRight size={16} />
+                </div>
+              </MagneticButton>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {posts
+              .filter(p => (p.recommendations || 0) > 0)
+              .sort((a, b) => (b.recommendations || 0) - (a.recommendations || 0))
+              .slice(0, 2)
+              .map((story, i) => (
+                <Link href={`/blog/${story.id}`} key={story.id}>
+                  <div className="group relative flex flex-col md:flex-row technical-card overflow-hidden bg-primary/[0.01]">
+                    <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                      <Image 
+                        src={story.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"} 
+                        alt={story.title}
+                        fill
+                        className="object-cover transition-transform duration-[2s] group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-primary/20 opacity-20 group-hover:opacity-0 transition-opacity" />
+                    </div>
+                    <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
+                      <div className="flex items-center gap-3 mb-6">
+                        <Award size={14} className="text-tertiary" />
+                        <span className="font-technical text-[9px] text-tertiary font-bold uppercase tracking-widest">{story.recommendations} Recommendations</span>
+                      </div>
+                      <h3 className="font-heading text-3xl text-primary mb-4 group-hover:text-tertiary transition-colors">{story.title}</h3>
+                      <p className="font-body text-sm text-primary/60 line-clamp-3 mb-8 italic">{story.excerpt}</p>
+                      <div className="flex items-center gap-4">
+                        <span className="font-technical text-[8px] uppercase font-bold text-primary/40 tracking-[0.2em]">Read Dispatch</span>
+                        <div className="h-[1px] flex-1 bg-primary/10" />
+                        <MoveUpRight size={14} className="text-tertiary" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
           </div>
         </div>
       </section>

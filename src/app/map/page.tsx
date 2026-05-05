@@ -16,6 +16,7 @@ const MapEngine = dynamic(() => import("@/components/map/MapEngine"), {
 });
 import { ArrowRight, Grid3X3, PlaneTakeoff } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 import { subscribeToPosts } from "@/lib/db/posts";
 import { Post } from "@/types";
@@ -36,7 +37,18 @@ export default function GlobalEngine() {
   const [activeSectorId, setActiveSectorId] = useState<string | null>(null);
   const [focusLocation, setFocusLocation] = useState<{ longitude: number; latitude: number; id: string } | null>(null);
 
+  const [userLocation, setUserLocation] = useState<{ longitude: number; latitude: number } | null>(null);
+
   useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setUserLocation({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        });
+      }, (err) => console.warn("Location access denied", err));
+    }
+
     const unsub = subscribeToPosts((data) => {
       setPosts(data.slice(0, 10)); // Top 10 latest
       setLoading(false);
@@ -130,13 +142,31 @@ export default function GlobalEngine() {
                 </span>
               </div>
             </div>
+
+            {/* User Location Telemetry */}
+            {userLocation && (
+              <div className="mt-4 bg-tertiary/[0.05] p-4 relative overflow-hidden border border-tertiary/20">
+                <div className="absolute top-0 right-0 w-1 h-1 border-t border-r border-tertiary"></div>
+                <span className="font-technical text-[7px] text-tertiary block mb-2 font-bold uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span>
+                  Operator Coordinates
+                </span>
+                <div className="flex justify-between items-end">
+                  <span className="font-technical text-[10px] text-primary font-bold tracking-tighter">
+                    {Math.abs(userLocation.latitude).toFixed(4)}° {userLocation.latitude >= 0 ? 'N' : 'S'}
+                    <br />
+                    {Math.abs(userLocation.longitude).toFixed(4)}° {userLocation.longitude >= 0 ? 'E' : 'W'}
+                  </span>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </aside>
 
       {/* Main Map Engine */}
       <div className="flex-1 relative bg-transparent flex items-center justify-center">
-        <MapEngine focusLocation={focusLocation} />
+        <MapEngine focusLocation={focusLocation} userLocation={userLocation} />
         
         {/* Engagement Overlays */}
         <div className="absolute bottom-12 right-12 z-30 flex flex-col gap-6 w-80">
@@ -187,23 +217,27 @@ export default function GlobalEngine() {
           </motion.div>
 
           {/* Action CTA */}
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-primary text-neutral p-6 relative flex items-center justify-between cursor-pointer shadow-2xl overflow-hidden group"
-          >
-            <div className="relative z-10">
-              <span className="font-technical text-[8px] text-tertiary block uppercase font-bold tracking-widest mb-1">Action Required</span>
-              <span className="font-body text-lg italic">Drill-down to Iceland</span>
-            </div>
-            <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
-            
-            {/* Background energy effect */}
-            <motion.div 
-              animate={{ opacity: [0.1, 0.3, 0.1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-tertiary/20 to-transparent skew-x-12 translate-x-1/2"
-            />
-          </motion.div>
+          {activePost && (
+            <Link href={`/blog/${activePost.id}`}>
+              <motion.div 
+                whileHover={{ scale: 1.02 }}
+                className="bg-primary text-neutral p-6 relative flex items-center justify-between cursor-pointer shadow-2xl overflow-hidden group mt-4"
+              >
+                <div className="relative z-10">
+                  <span className="font-technical text-[8px] text-tertiary block uppercase font-bold tracking-widest mb-1">Action Required</span>
+                  <span className="font-body text-lg italic">Drill-down to {activePost.title}</span>
+                </div>
+                <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
+                
+                {/* Background energy effect */}
+                <motion.div 
+                  animate={{ opacity: [0.1, 0.3, 0.1] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-tertiary/20 to-transparent skew-x-12 translate-x-1/2"
+                />
+              </motion.div>
+            </Link>
+          )}
         </div>
 
         {/* Center UI Reticle */}

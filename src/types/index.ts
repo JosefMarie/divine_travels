@@ -14,8 +14,22 @@ export interface Post {
   imageUrl: string;
   coordinates?: string;
   gear?: string;
+  gastronomy?: Array<{ name: string; image: string; ingredients: string }>;
+  tips?: string[];
+  expeditionGear?: string[];
+  recommendations?: number;
+  likes?: number;
   createdAt?: number;
   updatedAt?: number;
+}
+
+export interface PostComment {
+  id: string;
+  postId: string;
+  userName: string;
+  content: string;
+  likes?: number;
+  createdAt: number;
 }
 
 export interface Destination {

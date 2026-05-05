@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper to check if user is admin (authenticated)
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Posts Collection
+    match /posts/{postId} {
+      allow read: if true;
+      // Allow anyone to increment recommendations or likes
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['recommendations', 'likes']);
+      allow write: if isAdmin();
+      
+      // Comments sub-collection
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if true;
+        // Allow anyone to like a comment
+        allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']);
+        allow delete: if isAdmin();
+        
+        // Replies sub-collection
+        match /replies/{replyId} {
+          allow read: if true;
+          allow create: if true;
+          allow update, delete: if isAdmin();
+        }
+      }
+    }
+    
+    // Global Content Registry
+    match /site_content/{sectorId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Communication Hub (Messages)
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Security Logs
+    match /security_logs/{logId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Journey Registry (Destinations)
+    match /destinations/{destinationId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

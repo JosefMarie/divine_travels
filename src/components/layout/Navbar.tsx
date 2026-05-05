@@ -28,11 +28,11 @@ export const Navbar = () => {
 
   return (
     <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-6 glass-panel border-b border-primary/5">
-      <Link href="/" className="text-xl font-brand font-bold tracking-[0.2em] text-primary uppercase">
+      <Link href="/" className="text-4xl font-brand font-bold tracking-[0.1em] text-primary transition-colors hover:text-tertiary">
         Divine&apos;s Destinations
       </Link>
       
-      <div className="hidden md:flex items-center gap-4 font-body text-[10px] tracking-widest uppercase font-bold">
+      <div className="hidden md:flex items-center gap-4 font-body text-xs tracking-widest uppercase font-bold">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (

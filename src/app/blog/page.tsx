@@ -5,10 +5,10 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowUpRight, Clock, MessageSquare } from "lucide-react";
+import { ArrowUpRight, Clock, MessageSquare, Award, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { subscribeToPosts } from "@/lib/db/posts";
+import { subscribeToPosts, incrementRecommendations, incrementLikes } from "@/lib/db/posts";
 import { Post } from "@/types";
 
 // Skeleton loading card
@@ -27,15 +27,46 @@ const SkeletonCard = () => (
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [interacted, setInteracted] = useState<Record<string, { liked: boolean, recommended: boolean }>>({});
 
   useEffect(() => {
     // Real-time listener — updates instantly when Admin publishes a new post
     const unsub = subscribeToPosts((allPosts) => {
       setPosts(allPosts.filter((p) => p.status === "live"));
       setLoading(false);
+      
+      // Load interactions from localStorage
+      const interactions: Record<string, { liked: boolean, recommended: boolean }> = {};
+      allPosts.forEach(post => {
+        interactions[post.id] = {
+          liked: !!localStorage.getItem(`like_${post.id}`),
+          recommended: !!localStorage.getItem(`rec_${post.id}`)
+        };
+      });
+      setInteracted(interactions);
     });
     return () => unsub();
   }, []);
+
+  const toggleInteraction = (id: string, type: 'like' | 'rec') => {
+    const key = `${type === 'like' ? 'like' : 'rec'}_${id}`;
+    if (localStorage.getItem(key)) return;
+    
+    if (type === 'like') {
+      incrementLikes(id);
+    } else {
+      incrementRecommendations(id);
+    }
+    
+    localStorage.setItem(key, 'true');
+    setInteracted(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [type === 'like' ? 'liked' : 'recommended']: true
+      }
+    }));
+  };
 
   return (
     <main className="relative min-h-screen bg-transparent">
@@ -110,18 +141,38 @@ export default function BlogPage() {
 
                   <div className="pt-6 border-t border-primary/5 flex justify-between items-center">
                     <div className="flex gap-4">
-                      <div className="flex items-center gap-2 text-primary/30">
+                      <div className="flex items-center gap-1.5 text-primary/30">
                         <Clock size={12} />
                         <span className="font-technical text-[8px] font-bold uppercase">
                           {post.readTime}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-primary/30">
-                        <MessageSquare size={12} />
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleInteraction(post.id, 'rec');
+                        }}
+                        className={`flex items-center gap-1.5 transition-colors ${interacted[post.id]?.recommended ? 'text-tertiary' : 'text-primary/30 hover:text-tertiary'}`}
+                      >
+                        <Award size={12} className={interacted[post.id]?.recommended ? 'fill-tertiary/20' : ''} />
                         <span className="font-technical text-[8px] font-bold uppercase">
-                          0
+                          {post.recommendations || 0}
                         </span>
-                      </div>
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleInteraction(post.id, 'like');
+                        }}
+                        className={`flex items-center gap-1.5 transition-colors ${interacted[post.id]?.liked ? 'text-tertiary' : 'text-primary/30 hover:text-tertiary'}`}
+                      >
+                        <Heart size={12} className={interacted[post.id]?.liked ? 'fill-tertiary/20' : ''} />
+                        <span className="font-technical text-[8px] font-bold uppercase">
+                          {post.likes || 0}
+                        </span>
+                      </button>
                     </div>
                     <Link href={`/blog/${post.id}`}>
                       <MagneticButton className="flex items-center gap-2 text-tertiary">

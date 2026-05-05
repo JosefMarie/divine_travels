@@ -71,3 +71,71 @@ export async function deletePost(id: string): Promise<void> {
   const ref = doc(db, COLLECTION, id);
   await deleteDoc(ref);
 }
+
+// Increment recommendations count
+export async function incrementRecommendations(id: string): Promise<void> {
+  const ref = doc(db, COLLECTION, id);
+  const snapshot = await getDoc(ref);
+  if (snapshot.exists()) {
+    const current = snapshot.data().recommendations || 0;
+    await updateDoc(ref, { recommendations: current + 1 });
+  }
+}
+
+// Increment likes count
+export async function incrementLikes(id: string): Promise<void> {
+  const ref = doc(db, COLLECTION, id);
+  const snapshot = await getDoc(ref);
+  if (snapshot.exists()) {
+    const current = snapshot.data().likes || 0;
+    await updateDoc(ref, { likes: current + 1 });
+  }
+}
+
+// Comments sub-collection management
+export async function addComment(postId: string, userName: string, content: string): Promise<void> {
+  const commentsRef = collection(db, COLLECTION, postId, 'comments');
+  await addDoc(commentsRef, {
+    userName,
+    content,
+    createdAt: Date.now()
+  });
+}
+
+export function subscribeToComments(postId: string, callback: (comments: any[]) => void): Unsubscribe {
+  const commentsRef = collection(db, COLLECTION, postId, 'comments');
+  const q = query(commentsRef, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const comments = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    callback(comments);
+  });
+}
+
+// Comment likes management
+export async function incrementCommentLikes(postId: string, commentId: string): Promise<void> {
+  const ref = doc(db, COLLECTION, postId, 'comments', commentId);
+  const snapshot = await getDoc(ref);
+  if (snapshot.exists()) {
+    const current = snapshot.data().likes || 0;
+    await updateDoc(ref, { likes: current + 1 });
+  }
+}
+
+// Replies sub-collection management
+export async function addReply(postId: string, commentId: string, userName: string, content: string): Promise<void> {
+  const repliesRef = collection(db, COLLECTION, postId, 'comments', commentId, 'replies');
+  await addDoc(repliesRef, {
+    userName,
+    content,
+    createdAt: Date.now()
+  });
+}
+
+export function subscribeToReplies(postId: string, commentId: string, callback: (replies: any[]) => void): Unsubscribe {
+  const repliesRef = collection(db, COLLECTION, postId, 'comments', commentId, 'replies');
+  const q = query(repliesRef, orderBy('createdAt', 'asc')); // Oldest first for threads
+  return onSnapshot(q, (snapshot) => {
+    const replies = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    callback(replies);
+  });
+}

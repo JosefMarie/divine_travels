@@ -73,10 +73,12 @@ import {
   Loader2,
   LogOut,
   RefreshCw,
-  ShieldAlert
+  ShieldAlert,
+  BookOpen
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { AdminGuideView } from "./AdminGuide";
 
 // --- Sub-Views ---
 
@@ -134,6 +136,19 @@ const MissionControlView = () => {
       unsubMsg?.();
     };
   }, [auth.currentUser?.uid]);
+
+  const [userLocation, setUserLocation] = useState<{ longitude: number; latitude: number } | null>(null);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setUserLocation({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        });
+      }, (err) => console.warn("Location access denied", err));
+    }
+  }, []);
 
   const stats = [
     { label: "Total Stories", val: posts.length, sub: "Artifact Registry", icon: Globe, theme: "primary" },
@@ -226,13 +241,48 @@ const MissionControlView = () => {
             </button>
           ))}
         </div>
+
+        {/* Operator Telemetry */}
+        {userLocation && (
+          <div className="mt-8 pt-8 border-t border-primary/5">
+            <h3 className="font-technical text-[10px] uppercase tracking-[0.4em] mb-4 text-primary/40 font-bold flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span>
+              Admin Telemetry
+            </h3>
+            <div className="bg-tertiary/[0.05] p-4 relative overflow-hidden border border-tertiary/20">
+              <div className="absolute top-0 right-0 w-1 h-1 border-t border-r border-tertiary"></div>
+              <span className="font-technical text-[7px] text-tertiary block mb-2 font-bold uppercase tracking-widest">
+                Operator Coordinates
+              </span>
+              <span className="font-technical text-sm text-primary font-bold tracking-tighter">
+                {Math.abs(userLocation.latitude).toFixed(4)}° {userLocation.latitude >= 0 ? 'N' : 'S'}
+                <br />
+                {Math.abs(userLocation.longitude).toFixed(4)}° {userLocation.longitude >= 0 ? 'E' : 'W'}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </motion.div>
   );
 };
 
-const EMPTY_FORM = { title: '', excerpt: '', content: '', category: 'Expedition Log', date: '', readTime: '', status: 'draft' as Post['status'], imageUrl: '', coordinates: '', gear: '' };
+const EMPTY_FORM = { 
+  title: '', 
+  excerpt: '', 
+  content: '', 
+  category: 'Expedition Log', 
+  date: '', 
+  readTime: '', 
+  status: 'draft' as Post['status'], 
+  imageUrl: '', 
+  coordinates: '', 
+  gear: '',
+  gastronomy: [],
+  tips: [],
+  expeditionGear: []
+};
 
 const ContentVaultView = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -244,6 +294,9 @@ const ContentVaultView = () => {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success'|'error' } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [newDish, setNewDish] = useState({ name: '', ingredients: '', image: '' });
+  const [newTip, setNewTip] = useState('');
+  const [newGear, setNewGear] = useState('');
 
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -301,7 +354,20 @@ const ContentVaultView = () => {
 
   const selectPost = (post: Post) => {
     setSelectedPost(post);
-    setEditForm({ title: post.title, excerpt: post.excerpt, content: post.content, category: post.category, date: post.date, readTime: post.readTime, imageUrl: post.imageUrl, coordinates: post.coordinates, gear: post.gear });
+    setEditForm({ 
+      title: post.title, 
+      excerpt: post.excerpt, 
+      content: post.content, 
+      category: post.category, 
+      date: post.date, 
+      readTime: post.readTime, 
+      imageUrl: post.imageUrl, 
+      coordinates: post.coordinates, 
+      gear: post.gear,
+      gastronomy: post.gastronomy || [],
+      tips: post.tips || [],
+      expeditionGear: post.expeditionGear || []
+    });
   };
 
   const statusColor = (s: Post['status']) => s === 'live' ? 'text-green-600' : s === 'draft' ? 'text-primary/40' : 'text-primary/20';
@@ -368,6 +434,74 @@ const ContentVaultView = () => {
                 <div><label className={labelCls}>Image URL</label><input className={inputCls} value={form.imageUrl} onChange={e => setForm(f => ({...f, imageUrl: e.target.value}))} placeholder="https://..." /></div>
                 <div><label className={labelCls}>Coordinates</label><input className={inputCls} value={form.coordinates} onChange={e => setForm(f => ({...f, coordinates: e.target.value}))} placeholder="78.22Ãƒâ€šÃ‚Â° N, 15.62Ãƒâ€šÃ‚Â° E" /></div>
                 <div><label className={labelCls}>Gear Specs</label><input className={inputCls} value={form.gear} onChange={e => setForm(f => ({...f, gear: e.target.value}))} placeholder="Leica SL2-S | 35mm f/1.4" /></div>
+
+                {/* --- Gastronomy Sector --- */}
+                <div className="pt-6 border-t border-primary/5">
+                  <label className={labelCls}>Gastronomy Registry (Optional)</label>
+                  <div className="space-y-3 mb-4">
+                    {form.gastronomy?.map((dish, i) => (
+                      <div key={i} className="flex justify-between items-center p-3 bg-primary/[0.02] border border-primary/5 group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary/5 border border-primary/10 relative overflow-hidden flex-shrink-0">
+                            {dish.image && <Image src={dish.image} alt={dish.name} fill className="object-cover" />}
+                          </div>
+                          <div>
+                            <p className="font-technical text-[9px] font-bold text-primary uppercase">{dish.name}</p>
+                            <p className="font-body text-[8px] text-primary/40 truncate max-w-[200px] italic">{dish.ingredients}</p>
+                          </div>
+                        </div>
+                        <button onClick={() => setForm(f => ({ ...f, gastronomy: f.gastronomy?.filter((_, idx) => idx !== i) }))} className="text-tertiary opacity-0 group-hover:opacity-100 transition-opacity"><Minus size={14} /></button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-primary/[0.01] border border-dashed border-primary/10 p-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <input className={inputCls} placeholder="DISH NAME" value={newDish.name} onChange={e => setNewDish(d => ({ ...d, name: e.target.value }))} />
+                      <input className={inputCls} placeholder="IMAGE_URL.JPG" value={newDish.image} onChange={e => setNewDish(d => ({ ...d, image: e.target.value }))} />
+                    </div>
+                    <textarea className={inputCls} placeholder="INGREDIENTS / PREPARATION" rows={2} value={newDish.ingredients} onChange={e => setNewDish(d => ({ ...d, ingredients: e.target.value }))} />
+                    <button 
+                      onClick={() => { if (newDish.name) { setForm(f => ({ ...f, gastronomy: [...(f.gastronomy || []), newDish] })); setNewDish({ name: '', ingredients: '', image: '' }); } }}
+                      className="w-full py-2 bg-primary/5 hover:bg-primary/10 font-technical text-[8px] uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 border border-primary/5"
+                    >
+                      <Plus size={10} /> Add Dish Node
+                    </button>
+                  </div>
+                </div>
+
+                {/* --- Tactical Tips Sector --- */}
+                <div className="pt-6 border-t border-primary/5">
+                  <label className={labelCls}>Tactical Guidance (Tips)</label>
+                  <div className="space-y-2 mb-3">
+                    {form.tips?.map((tip, i) => (
+                      <div key={i} className="flex justify-between items-center px-3 py-2 bg-primary/[0.02] border border-primary/5 group">
+                        <span className="font-body text-[9px] text-primary/60 italic">• {tip}</span>
+                        <button onClick={() => setForm(f => ({ ...f, tips: f.tips?.filter((_, idx) => idx !== i) }))} className="text-tertiary opacity-0 group-hover:opacity-100 transition-opacity"><Minus size={12} /></button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input className={inputCls} placeholder="NEW TACTICAL TIP..." value={newTip} onChange={e => setNewTip(e.target.value)} onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); if(newTip) { setForm(f => ({ ...f, tips: [...(f.tips || []), newTip] })); setNewTip(''); } } }} />
+                    <button onClick={() => { if (newTip) { setForm(f => ({ ...f, tips: [...(f.tips || []), newTip] })); setNewTip(''); } }} className="px-4 bg-primary/5 hover:bg-primary/10 border border-primary/5"><Plus size={12} /></button>
+                  </div>
+                </div>
+
+                {/* --- Expedition Gear Sector --- */}
+                <div className="pt-6 border-t border-primary/5">
+                  <label className={labelCls}>Expedition Gear Manifest</label>
+                  <div className="space-y-2 mb-3">
+                    {form.expeditionGear?.map((gear, i) => (
+                      <div key={i} className="flex justify-between items-center px-3 py-2 bg-primary/[0.02] border border-primary/5 group">
+                        <span className="font-technical text-[8px] text-primary font-bold uppercase tracking-widest">{gear}</span>
+                        <button onClick={() => setForm(f => ({ ...f, expeditionGear: f.expeditionGear?.filter((_, idx) => idx !== i) }))} className="text-tertiary opacity-0 group-hover:opacity-100 transition-opacity"><Minus size={12} /></button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input className={inputCls} placeholder="NEW GEAR ITEM..." value={newGear} onChange={e => setNewGear(e.target.value)} onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); if(newGear) { setForm(f => ({ ...f, expeditionGear: [...(f.expeditionGear || []), newGear] })); setNewGear(''); } } }} />
+                    <button onClick={() => { if (newGear) { setForm(f => ({ ...f, expeditionGear: [...(f.expeditionGear || []), newGear] })); setNewGear(''); } }} className="px-4 bg-primary/5 hover:bg-primary/10 border border-primary/5"><Plus size={12} /></button>
+                  </div>
+                </div>
               </div>
               <button
                 onClick={handleCreate}
@@ -662,8 +796,8 @@ const DestinationsVaultView = () => {
                 <div><label className={labelCls}>Sector Title</label><input className={inputCls} value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} placeholder="E.g. Nordic Highlands..." /></div>
                 <div><label className={labelCls}>Location Display</label><input className={inputCls} value={form.location} onChange={e => setForm(f => ({...f, location: e.target.value}))} placeholder="E.g. Iceland // 64Ãƒâ€šÃ‚Â° N" /></div>
                 <div className="grid grid-cols-2 gap-4">
-                   <div><label className={labelCls}>Latitude</label><input type="number" step="0.000001" className={inputCls} value={form.latitude} onChange={e => setForm(f => ({...f, latitude: parseFloat(e.target.value)}))} /></div>
-                   <div><label className={labelCls}>Longitude</label><input type="number" step="0.000001" className={inputCls} value={form.longitude} onChange={e => setForm(f => ({...f, longitude: parseFloat(e.target.value)}))} /></div>
+                    <div><label className={labelCls}>Latitude</label><input type="number" step="0.000001" className={inputCls} value={isNaN(form.latitude) ? "" : form.latitude} onChange={e => setForm(f => ({...f, latitude: e.target.value === "" ? 0 : parseFloat(e.target.value)}))} /></div>
+                    <div><label className={labelCls}>Longitude</label><input type="number" step="0.000001" className={inputCls} value={isNaN(form.longitude) ? "" : form.longitude} onChange={e => setForm(f => ({...f, longitude: e.target.value === "" ? 0 : parseFloat(e.target.value)}))} /></div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div><label className={labelCls}>Category</label>
@@ -783,14 +917,14 @@ const DestinationsVaultView = () => {
               <div><label className={labelCls}>Title</label><input className={inputCls} value={editForm.title || ''} onChange={e => setEditForm(f => ({...f, title: e.target.value}))} /></div>
               <div><label className={labelCls}>Location</label><input className={inputCls} value={editForm.location || ''} onChange={e => setEditForm(f => ({...f, location: e.target.value}))} /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                   <label className={labelCls}>Lat</label>
-                   <input type="number" step="0.000001" className={inputCls} value={editForm.latitude ?? 0} onChange={e => setEditForm(f => ({...f, latitude: parseFloat(e.target.value)}))} />
-                </div>
-                <div>
-                   <label className={labelCls}>Long</label>
-                   <input type="number" step="0.000001" className={inputCls} value={editForm.longitude ?? 0} onChange={e => setEditForm(f => ({...f, longitude: parseFloat(e.target.value)}))} />
-                </div>
+                 <div>
+                    <label className={labelCls}>Lat</label>
+                    <input type="number" step="0.000001" className={inputCls} value={isNaN(editForm.latitude as number) ? "" : editForm.latitude} onChange={e => setEditForm(f => ({...f, latitude: e.target.value === "" ? 0 : parseFloat(e.target.value)}))} />
+                 </div>
+                 <div>
+                    <label className={labelCls}>Long</label>
+                    <input type="number" step="0.000001" className={inputCls} value={isNaN(editForm.longitude as number) ? "" : editForm.longitude} onChange={e => setEditForm(f => ({...f, longitude: e.target.value === "" ? 0 : parseFloat(e.target.value)}))} />
+                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -2077,7 +2211,7 @@ export default function AdminPage() {
   return (
     <main className="relative min-h-screen bg-transparent flex">
       {/* Sidebar Navigation */}
-      <aside className="fixed left-0 h-screen w-64 border-r border-primary/5 bg-neutral/80 backdrop-blur-2xl flex flex-col py-8 px-4 z-50">
+      <aside className="fixed left-0 h-screen w-64 border-r border-primary/10 bg-neutral/95 backdrop-blur-3xl flex flex-col py-8 px-4 z-50 shadow-2xl">
         <div className="mb-12 px-4 flex justify-between items-start">
           <div>
             <h1 className="text-xl font-brand font-light tracking-[0.2em] text-primary uppercase">Mission</h1>
@@ -2093,14 +2227,19 @@ export default function AdminPage() {
             { id: "control", label: "Mission Control", icon: Terminal },
             { id: "vault", label: "Content Vault", icon: Database },
             { id: "cms", label: "Intelligence Manifest", icon: Layers },
-            { id: "destinations", label: "Journey Registry", icon: MapPin },
+            { id: "destinations", label: "Journey Registry (COMING SOON)", icon: MapPin },
             { id: "inbox", label: "Communication Hub", icon: Inbox },
             { id: "analytics", label: "System Analytics", icon: BarChart3 },
+            { id: "guide", label: "Operations Manual", icon: BookOpen },
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all duration-300 group ${activeTab === item.id ? 'bg-primary/5 border-l-2 border-tertiary text-primary' : 'text-primary/40 hover:bg-primary/[0.02] hover:text-primary'}`}
+              onClick={() => item.id !== 'destinations' && setActiveTab(item.id)}
+              disabled={item.id === 'destinations'}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all duration-300 group ${
+                activeTab === item.id ? 'bg-primary/10 border-l-2 border-tertiary text-primary shadow-sm' : 
+                item.id === 'destinations' ? 'opacity-30 grayscale cursor-not-allowed' : 'text-primary/60 hover:bg-primary/[0.04] hover:text-primary'
+              }`}
             >
               <motion.div
                 whileHover={{ rotate: 360 }}
@@ -2159,6 +2298,7 @@ export default function AdminPage() {
               {activeTab === 'destinations' && "Journey Registry"}
               {activeTab === 'inbox' && "Communication Hub"}
               {activeTab === 'analytics' && "System Analytics"}
+              {activeTab === 'guide' && "Operations Manual"}
               {activeTab === 'settings' && "System Settings"}
               {activeTab === 'security' && "Security Hub"}
             </h2>
@@ -2169,6 +2309,7 @@ export default function AdminPage() {
               {activeTab === 'destinations' && "Administrative oversight of global mission sectors and geographic registries."}
               {activeTab === 'inbox' && "Encrypted transmission matrix for secure expedition communications."}
               {activeTab === 'analytics' && "Geometric mapping of global traffic metrics and infrastructure health."}
+              {activeTab === 'guide' && "Technical operating procedures for the NEXUS-AURORA administrative registry."}
               {activeTab === 'settings' && "Configure platform identity, aesthetic protocols, and core engine parameters."}
               {activeTab === 'security' && "Administrative oversight of encryption protocols and biometric access logs."}
             </p>
@@ -2189,6 +2330,7 @@ export default function AdminPage() {
             {activeTab === 'destinations' && <DestinationsVaultView />}
             {activeTab === 'inbox' && <CommunicationHubView />}
             {activeTab === 'analytics' && <SystemAnalyticsView />}
+            {activeTab === 'guide' && <AdminGuideView />}
             {activeTab === 'settings' && <SystemSettingsView />}
             {activeTab === 'security' && <SecurityView />}
           </motion.div>

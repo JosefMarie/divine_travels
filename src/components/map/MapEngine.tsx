@@ -30,14 +30,20 @@ type LivePin = {
   longitude: number;
 };
 
-export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: number; latitude: number; id: string } | null }) => {
+export const MapEngine = ({ 
+  focusLocation,
+  userLocation
+}: { 
+  focusLocation?: { longitude: number; latitude: number; id: string } | null,
+  userLocation?: { longitude: number; latitude: number } | null
+}) => {
   const mapRef = useRef<MapRef>(null);
   const [pins, setPins] = useState<LivePin[]>([]);
   const [loading, setLoading] = useState(true);
   const [activePin, setActivePin] = useState<LivePin | null>(null);
 
-  const handleFlyTo = (longitude: number, latitude: number) => {
-    mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 6, duration: 3000, essential: true });
+  const handleFlyTo = (longitude: number, latitude: number, zoom = 6) => {
+    mapRef.current?.flyTo({ center: [longitude, latitude], zoom, duration: 3000, essential: true });
   };
 
   // Handle external focus (e.g. from sidebar)
@@ -156,6 +162,22 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
               <div className="w-3 h-3 rounded-full bg-primary/20 animate-pulse" />
             </Marker>
           ))}
+
+          {/* User Location Marker */}
+          {userLocation && (
+            <Marker longitude={userLocation.longitude} latitude={userLocation.latitude} anchor="center">
+              <div className="relative flex items-center justify-center group cursor-pointer">
+                <div className="w-20 h-20 rounded-full border border-tertiary/20 absolute animate-spin" style={{ animationDuration: '4s' }} />
+                <div className="w-10 h-10 rounded-full border border-tertiary/40 absolute animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_15px_rgba(179,48,91,0.8)] relative z-20" />
+                <div className="absolute -top-12 whitespace-nowrap bg-neutral/90 backdrop-blur-md px-3 py-1 border border-tertiary/20 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0 pointer-events-none">
+                  <span className="font-technical text-[8px] font-bold uppercase tracking-widest text-tertiary">
+                    Operator Location
+                  </span>
+                </div>
+              </div>
+            </Marker>
+          )}
         </Map>
 
         {/* Technical Grid Overlay */}
@@ -194,6 +216,11 @@ export const MapEngine = ({ focusLocation }: { focusLocation?: { longitude: numb
           <MagneticButton className="glass-panel p-3 text-primary hover:bg-primary/5" onClick={() => { mapRef.current?.flyTo({ center: [10, 30], zoom: 1.5, duration: 2000 }); setActivePin(null); }}>
             <Layers size={18} />
           </MagneticButton>
+          {userLocation && (
+            <MagneticButton className="glass-panel p-3 text-tertiary hover:bg-tertiary/10" onClick={() => handleFlyTo(userLocation.longitude, userLocation.latitude, 10)}>
+              <Target size={18} />
+            </MagneticButton>
+          )}
         </div>
       </div>
 
