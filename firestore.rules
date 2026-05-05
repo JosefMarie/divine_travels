@@ -53,5 +53,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Live Audience Tracking
+    match /presence/{presenceId} {
+      allow read, write: if true;
+    }
   }
 }

@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ArrowUpRight, Clock, MessageSquare, Award, Heart } from "lucide-react";
+import { ArrowUpRight, Clock, Award, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { subscribeToPosts, incrementRecommendations, incrementLikes } from "@/lib/db/posts";
@@ -106,7 +106,7 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {posts.map((post, idx) => (
               <div key={post.id} className="group flex flex-col technical-card p-4">
-                <div className="relative aspect-[16/9] mb-8 overflow-hidden border border-primary/5 bg-primary/[0.02]">
+                <Link href={`/blog/${post.id}`} className="relative block aspect-[16/9] mb-8 overflow-hidden border border-primary/5 bg-primary/[0.02]">
                   {post.imageUrl && (
                     <Image
                       src={post.imageUrl}
@@ -116,10 +116,10 @@ export default function BlogPage() {
                     />
                   )}
                   <Scanline />
-                  <div className="absolute top-4 left-4 font-technical text-[8px] bg-primary text-neutral px-2 py-1 font-bold">
+                  <div className="absolute top-4 left-4 font-technical text-[8px] bg-primary text-neutral px-2 py-1 font-bold z-10">
                     CHRON_{String(idx + 1).padStart(2, "0")}
                   </div>
-                </div>
+                </Link>
 
                 <div className="flex-1 flex flex-col">
                   <div className="flex items-center gap-4 mb-4">

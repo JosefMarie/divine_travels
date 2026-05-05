@@ -13,7 +13,7 @@ import {
   Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Post, PostInput } from '@/types';
+import { Post, PostInput, PostComment, PostReply } from '@/types';
 
 const COLLECTION = 'posts';
 const postsRef = collection(db, COLLECTION);
@@ -96,17 +96,19 @@ export async function incrementLikes(id: string): Promise<void> {
 export async function addComment(postId: string, userName: string, content: string): Promise<void> {
   const commentsRef = collection(db, COLLECTION, postId, 'comments');
   await addDoc(commentsRef, {
+    postId,
     userName,
     content,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    likes: 0
   });
 }
 
-export function subscribeToComments(postId: string, callback: (comments: any[]) => void): Unsubscribe {
+export function subscribeToComments(postId: string, callback: (comments: PostComment[]) => void): Unsubscribe {
   const commentsRef = collection(db, COLLECTION, postId, 'comments');
   const q = query(commentsRef, orderBy('createdAt', 'desc'));
   return onSnapshot(q, (snapshot) => {
-    const comments = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    const comments = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PostComment));
     callback(comments);
   });
 }
@@ -131,11 +133,11 @@ export async function addReply(postId: string, commentId: string, userName: stri
   });
 }
 
-export function subscribeToReplies(postId: string, commentId: string, callback: (replies: any[]) => void): Unsubscribe {
+export function subscribeToReplies(postId: string, commentId: string, callback: (replies: PostReply[]) => void): Unsubscribe {
   const repliesRef = collection(db, COLLECTION, postId, 'comments', commentId, 'replies');
   const q = query(repliesRef, orderBy('createdAt', 'asc')); // Oldest first for threads
   return onSnapshot(q, (snapshot) => {
-    const replies = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    const replies = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PostReply));
     callback(replies);
   });
 }

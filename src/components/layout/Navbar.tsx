@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ChevronDown, Shield, Settings, Camera, UtensilsCrossed, Navigation } from "lucide-react";
+import { User, ChevronDown, Shield, Settings, Camera, UtensilsCrossed, Navigation, Search } from "lucide-react";
 import { MagneticButton } from "../ui/MagneticButton";
+import { SearchScan } from "../ui/SearchScan";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navLinks = [
@@ -17,6 +18,7 @@ const navLinks = [
 export const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [showSystems, setShowSystems] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -146,12 +148,21 @@ export const Navbar = () => {
       </div>
       
       <div className="flex items-center gap-6">
+        <MagneticButton 
+          className="text-primary p-2 rounded-full hover:bg-primary/5 transition-colors"
+          onClick={() => setIsSearchOpen(true)}
+        >
+          <Search size={20} strokeWidth={1.5} />
+        </MagneticButton>
+
         <Link href="/admin">
           <MagneticButton className="text-primary p-2 rounded-full hover:bg-primary/5 transition-colors">
             <User size={20} strokeWidth={1.5} />
           </MagneticButton>
         </Link>
       </div>
+
+      <SearchScan isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </nav>
   );
 };

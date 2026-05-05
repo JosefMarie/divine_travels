@@ -60,8 +60,8 @@ export async function saveSectorDraft<T>(sectorId: SectorId, data: T) {
         draft: data,
         updatedAt: Date.now()
       });
-    } catch (e: any) {
-      if (e.code === 'not-found') {
+    } catch (e) {
+      if (e && typeof e === 'object' && 'code' in e && e.code === 'not-found') {
         await setDoc(docRef, {
           id: sectorId,
           published: data,

@@ -32,6 +32,13 @@ export interface PostComment {
   createdAt: number;
 }
 
+export interface PostReply {
+  id: string;
+  userName: string;
+  content: string;
+  createdAt: number;
+}
+
 export interface Destination {
   id: string;
   title: string;

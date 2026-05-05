@@ -247,7 +247,7 @@ export default function Home() {
               .filter(p => (p.recommendations || 0) > 0)
               .sort((a, b) => (b.recommendations || 0) - (a.recommendations || 0))
               .slice(0, 2)
-              .map((story, i) => (
+              .map((story) => (
                 <Link href={`/blog/${story.id}`} key={story.id}>
                   <div className="group relative flex flex-col md:flex-row technical-card overflow-hidden bg-primary/[0.01]">
                     <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { TechnicalOverlay, Scanline } from "@/components/ui/TechnicalOverlay";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { AdminTicker } from "@/components/ui/AdminTicker";
 import Map, { Marker, MapRef } from 'react-map-gl/mapbox';
 import { Timestamp } from "firebase/firestore";
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -2282,8 +2283,10 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content Area */}
-      <section className="flex-1 ml-64 p-12 bg-transparent relative overflow-hidden">
-        <TechnicalOverlay className="opacity-5" />
+      <section className="flex-1 ml-64 bg-transparent relative overflow-hidden flex flex-col">
+        <AdminTicker />
+        <div className="p-12 flex-1 overflow-y-auto">
+          <TechnicalOverlay className="opacity-5" />
         
         <header className="flex justify-between items-end mb-16 relative z-10">
           <div className="max-w-2xl">
@@ -2337,13 +2340,14 @@ export default function AdminPage() {
         </AnimatePresence>
 
         <footer className="mt-20 pt-8 border-t border-primary/5 flex justify-between items-center relative z-10">
-           <p className="font-technical text-[8px] text-primary/20 tracking-[0.4em] uppercase">Ãƒâ€šÃ‚Â© 2026 Divine&apos;s Destinations // Terminal V.0.4.2</p>
-           <div className="flex gap-8">
-              <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">System Status: Operational</span>
-              <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">EU-CENTRAL-1 (Frankfurt)</span>
-           </div>
+          <p className="font-technical text-[8px] text-primary/20 tracking-[0.4em] uppercase">© 2026 Divine&apos;s Destinations // Terminal V.0.4.2</p>
+          <div className="flex gap-8">
+            <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">System Status: Operational</span>
+            <span className="font-technical text-[8px] text-primary/40 uppercase font-bold">EU-CENTRAL-1 (Frankfurt)</span>
+          </div>
         </footer>
-      </section>
-    </main>
-  );
+      </div>
+    </section>
+  </main>
+);
 }

@@ -12,14 +12,32 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-import { initializeFirestore } from 'firebase/firestore';
+import { initializeFirestore } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+
 // Prevent duplicate app initialization in Next.js hot-reload
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Using long-polling to avoid GRPC issues in certain environments
+// Standard Firestore initialization with a more robust connection for Server Components
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 });
+
+// Initialize App Check (Client-side only)
+if (typeof window !== 'undefined') {
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  if (siteKey) {
+    if (process.env.NODE_ENV === 'development') {
+      (window as Window & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string }).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+    
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(siteKey),
+      isTokenAutoRefreshEnabled: true
+    });
+  }
+}
+
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export default app;

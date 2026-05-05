@@ -14,6 +14,7 @@ const MapEngine = dynamic(() => import("@/components/map/MapEngine"), {
     </div>
   )
 });
+import { SystemErrorBoundary } from "@/components/ui/SystemErrorBoundary";
 import { ArrowRight, Grid3X3, PlaneTakeoff } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -166,7 +167,9 @@ export default function GlobalEngine() {
 
       {/* Main Map Engine */}
       <div className="flex-1 relative bg-transparent flex items-center justify-center">
-        <MapEngine focusLocation={focusLocation} userLocation={userLocation} />
+        <SystemErrorBoundary componentName="MAP_ENGINE">
+          <MapEngine focusLocation={focusLocation} userLocation={userLocation} />
+        </SystemErrorBoundary>
         
         {/* Engagement Overlays */}
         <div className="absolute bottom-12 right-12 z-30 flex flex-col gap-6 w-80">

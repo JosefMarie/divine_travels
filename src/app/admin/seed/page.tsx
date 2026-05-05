@@ -150,10 +150,10 @@ export default function SeedPage() {
         });
       }
       setStatus("success");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Seeding failed:", error);
       setStatus("error");
-      setErrorMessage(error.message || "Unknown connectivity error.");
+      setErrorMessage(error instanceof Error ? error.message : "Unknown connectivity error.");
     }
   };
 

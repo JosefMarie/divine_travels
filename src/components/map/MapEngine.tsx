@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, Layers, Target, ArrowUpRight, Loader2 } from "lucide-react";
 import { MagneticButton } from "../ui/MagneticButton";
-import Map, { Marker } from 'react-map-gl/mapbox';
+import Map, { Marker, Source, Layer } from 'react-map-gl/mapbox';
 import type { MapRef } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Link from "next/link";
@@ -43,7 +43,14 @@ export const MapEngine = ({
   const [activePin, setActivePin] = useState<LivePin | null>(null);
 
   const handleFlyTo = (longitude: number, latitude: number, zoom = 6) => {
-    mapRef.current?.flyTo({ center: [longitude, latitude], zoom, duration: 3000, essential: true });
+    mapRef.current?.flyTo({ 
+      center: [longitude, latitude], 
+      zoom, 
+      duration: 3500, 
+      pitch: 45, 
+      bearing: Math.random() * 30 - 15,
+      essential: true 
+    });
   };
 
   // Handle external focus (e.g. from sidebar)
@@ -67,11 +74,26 @@ export const MapEngine = ({
         const coords = parseCoords(post.coordinates);
         if (coords) live.push({ post, ...coords });
       });
+      // Sort chronologically (oldest first for path order)
+      live.sort((a, b) => {
+        const dateA = new Date(a.post.date || a.post.createdAt || 0).getTime();
+        const dateB = new Date(b.post.date || b.post.createdAt || 0).getTime();
+        return dateA - dateB;
+      });
       setPins(live);
       setLoading(false);
     });
     return () => unsub();
   }, []);
+
+  const routeGeoJSON = {
+    type: 'Feature' as const,
+    properties: {},
+    geometry: {
+      type: 'LineString' as const,
+      coordinates: pins.map(p => [p.longitude, p.latitude])
+    }
+  };
 
   const handleZoom = (direction: 'in' | 'out') => {
     const currentZoom = mapRef.current?.getZoom() || 1;
@@ -108,45 +130,84 @@ export const MapEngine = ({
             .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right { display: none !important; }
           `}</style>
 
+          {/* Expedition Route Path */}
+          {pins.length > 1 && (
+            <Source id="route" type="geojson" data={routeGeoJSON}>
+              <Layer
+                id="route-layer"
+                type="line"
+                layout={{
+                  'line-join': 'round',
+                  'line-cap': 'round'
+                }}
+                paint={{
+                  'line-color': '#b3305b',
+                  'line-width': 1.5,
+                  'line-dasharray': [4, 4],
+                  'line-opacity': 0.6
+                }}
+              />
+              <Layer
+                id="route-glow"
+                type="line"
+                paint={{
+                  'line-color': '#b3305b',
+                  'line-width': 4,
+                  'line-opacity': 0.1,
+                  'line-blur': 4
+                }}
+              />
+            </Source>
+          )}
+
           {/* Live Firestore Markers */}
           {pins.map((pin) => (
             <Marker
               key={pin.post.id}
               longitude={pin.longitude}
               latitude={pin.latitude}
-              anchor="center"
+              anchor="bottom"
               onClick={e => {
                 e.originalEvent.stopPropagation();
                 setActivePin(activePin?.post.id === pin.post.id ? null : pin);
                 handleFlyTo(pin.longitude, pin.latitude);
               }}
             >
-              <div className="relative flex items-center justify-center group cursor-pointer">
-                {/* Sonar ping for live entries */}
-                {pin.post.status === 'live' && (
-                  <>
-                    <div className="w-16 h-16 rounded-full border border-green-500/40 absolute animate-ping" style={{ animationDuration: '2s' }} />
-                    <div className="w-24 h-24 rounded-full border border-green-500/20 absolute animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }} />
-                  </>
-                )}
-                {pin.post.status === 'draft' && (
-                  <div className="w-12 h-12 rounded-full border border-tertiary/30 absolute animate-ping" style={{ animationDuration: '3s' }} />
-                )}
+              <div className="relative flex flex-col items-center group cursor-pointer">
+                {/* Marker Stalk (3D effect) */}
+                <div className="w-[1px] h-12 bg-gradient-to-t from-primary/40 to-transparent mb-[-4px]" />
+                
+                <div className="relative flex items-center justify-center">
+                  {/* Sonar ping for live entries */}
+                  {pin.post.status === 'live' && (
+                    <>
+                      <div className="w-12 h-12 rounded-full border border-green-500/40 absolute animate-ping" style={{ animationDuration: '2s' }} />
+                      <div className="w-16 h-16 rounded-full border border-green-500/20 absolute animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }} />
+                    </>
+                  )}
+                  {pin.post.status === 'draft' && (
+                    <div className="w-10 h-10 rounded-full border border-tertiary/30 absolute animate-ping" style={{ animationDuration: '3s' }} />
+                  )}
 
-                {/* Core Node */}
-                <div
-                  className="w-3 h-3 rounded-full relative z-20 transition-all duration-300 group-hover:scale-150"
-                  style={{
-                    backgroundColor: pin.post.status === 'live' ? '#16a34a' : pin.post.status === 'draft' ? '#b3305b' : '#888',
-                    boxShadow: dotGlow(pin.post.status),
-                  }}
-                />
+                  {/* Core Node */}
+                  <div
+                    className="w-2.5 h-2.5 rounded-full relative z-20 transition-all duration-300 group-hover:scale-150 border border-white/20"
+                    style={{
+                      backgroundColor: pin.post.status === 'live' ? '#16a34a' : pin.post.status === 'draft' ? '#b3305b' : '#888',
+                      boxShadow: dotGlow(pin.post.status),
+                    }}
+                  />
+                </div>
 
                 {/* Hover Tooltip */}
-                <div className="absolute -top-12 whitespace-nowrap bg-neutral/90 backdrop-blur-md px-3 py-1 border border-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0 pointer-events-none">
-                  <span className={`font-technical text-[8px] font-bold uppercase tracking-widest ${statusColor(pin.post.status)}`}>
-                    {pin.post.title} {"//"} {pin.post.status.toUpperCase()}
+                <div className="absolute -top-14 whitespace-nowrap bg-neutral/95 backdrop-blur-md px-4 py-2 border border-primary/10 shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0 pointer-events-none z-50">
+                  <span className={`font-technical text-[9px] font-bold uppercase tracking-[0.2em] ${statusColor(pin.post.status)}`}>
+                    {pin.post.title}
                   </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="w-1 h-1 rounded-full bg-primary/20" />
+                    <span className="font-technical text-[7px] text-primary/40 uppercase font-bold tracking-widest">{pin.post.category}</span>
+                  </div>
                 </div>
               </div>
             </Marker>
@@ -182,6 +243,24 @@ export const MapEngine = ({
 
         {/* Technical Grid Overlay */}
         <div className="absolute inset-0 technical-grid opacity-30 pointer-events-none" />
+        
+        {/* Real-time Coordinate Readout */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-40 pointer-events-none hidden md:flex items-center gap-8 glass-panel px-8 py-3 border border-primary/10">
+          <div className="flex flex-col">
+            <span className="font-technical text-[7px] text-primary/30 uppercase font-bold tracking-[0.2em]">Scanner_Bearing</span>
+            <span className="font-technical text-[10px] text-primary font-bold">342.5° NW</span>
+          </div>
+          <div className="w-[1px] h-6 bg-primary/10" />
+          <div className="flex flex-col items-center">
+            <span className="font-technical text-[7px] text-tertiary uppercase font-bold tracking-[0.2em]">Registry_Status</span>
+            <span className="font-technical text-[10px] text-tertiary font-bold animate-pulse">SYSTEMS_NOMINAL</span>
+          </div>
+          <div className="w-[1px] h-6 bg-primary/10" />
+          <div className="flex flex-col items-end">
+            <span className="font-technical text-[7px] text-primary/30 uppercase font-bold tracking-[0.2em]">Signal_Strength</span>
+            <span className="font-technical text-[10px] text-primary font-bold">100%_STABLE</span>
+          </div>
+        </div>
       </div>
 
       {/* Loading Indicator */}

@@ -107,9 +107,9 @@ export const AdminGuideView = () => {
             <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary/40 font-technical text-[8px] font-bold">LIVE</div>
           </div>
           <div className="space-y-4">
-            <div className="p-3 bg-primary/5 border border-primary/10 font-body text-[10px] text-primary/60 italic">
-               "Documenting the resolution of a technical world..."
-            </div>
+             <div className="p-3 bg-primary/5 border border-primary/10 font-body text-[10px] text-primary/60 italic">
+                &quot;Documenting the resolution of a technical world...&quot;
+             </div>
             <div className="flex justify-end gap-2">
                <div className="h-6 w-20 bg-primary/10 rounded" />
                <div className="h-6 w-24 bg-tertiary/80 rounded" />
@@ -217,14 +217,14 @@ export const AdminGuideView = () => {
                   <Lock size={14} className="text-tertiary" />
                   <h4 className="font-technical text-[10px] text-primary font-bold uppercase tracking-widest">Safety Manifests</h4>
                </div>
-               <p className="font-body text-xs text-primary/40 italic">Use "Stage Draft" in the Intelligence Manifest to test new layouts. The live platform remains unaffected until the Push protocol is authorized.</p>
+                <p className="font-body text-xs text-primary/40 italic">Use &quot;Stage Draft&quot; in the Intelligence Manifest to test new layouts. The live platform remains unaffected until the Push protocol is authorized.</p>
             </div>
             <div>
                <div className="flex items-center gap-2 mb-4">
                   <Settings size={14} className="text-tertiary" />
                   <h4 className="font-technical text-[10px] text-primary font-bold uppercase tracking-widest">Identity Control</h4>
                </div>
-               <p className="font-body text-xs text-primary/40 italic">System Settings control the global HUD identity. Changing the "Theme" will dynamically shift aesthetic protocols across all sectors.</p>
+                <p className="font-body text-xs text-primary/40 italic">System Settings control the global HUD identity. Changing the &quot;Theme&quot; will dynamically shift aesthetic protocols across all sectors.</p>
             </div>
          </div>
       </div>
